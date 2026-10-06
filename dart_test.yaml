@@ -1,0 +1,6 @@
+# Test configuration.
+tags:
+  # Pixel-comparison tests. Font rendering differs between operating
+  # systems, so goldens are generated on (and should be compared on) one
+  # platform. Skip elsewhere with: flutter test --exclude-tags golden
+  golden:

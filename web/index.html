@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
   <!--
@@ -22,25 +22,83 @@
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="math_strike">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Math Strike">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>math_strike</title>
+  <title>Math Strike</title>
   <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0B0820">
+
+  <!-- Brand pre-loader: shown until Flutter paints its first frame so the
+       hand-off to the animated splash screen has no white flash. -->
+  <style>
+    html, body { margin: 0; height: 100%; background: #0B0820; }
+    #boot-loader {
+      position: fixed; inset: 0; display: flex;
+      align-items: center; justify-content: center;
+      background: radial-gradient(circle at 50% 38%, #3A1670 0%, #1A1040 45%, #0B0820 100%);
+    }
+    #boot-loader .mark {
+      width: 96px; height: 96px; border-radius: 25px;
+      box-shadow: 0 0 40px rgba(255, 79, 216, .45);
+      animation: boot-pulse 1.4s ease-in-out infinite;
+    }
+    @keyframes boot-pulse { 50% { transform: scale(.88); opacity: .7; } }
+    @media (prefers-reduced-motion: reduce) { #boot-loader .mark { animation: none; } }
+  </style>
 </head>
 <body>
-  <!--
-    You can customize the "flutter_bootstrap.js" script.
-    This is useful to provide a custom configuration to the Flutter loader
-    or to give the user feedback during the initialization process.
-
-    For more details:
-    * https://docs.flutter.dev/platform-integration/web/initialization
-  -->
+  <div id="boot-loader" role="progressbar" aria-label="Loading Math Strike">
+    <!-- Static SVG copy of the emblem drawn by MathStrikeEmblemPainter
+         (lib/core/widgets/brand/math_strike_logo.dart); keep in sync. -->
+    <svg class="mark" viewBox="0 0 100 100" aria-hidden="true">
+      <defs>
+        <linearGradient id="ms-tile" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#5B3DF5"/>
+          <stop offset=".55" stop-color="#A43CF0"/>
+          <stop offset="1" stop-color="#FF4FD8"/>
+        </linearGradient>
+        <radialGradient id="ms-light" cx=".18" cy=".12" r=".95">
+          <stop offset="0" stop-color="#fff" stop-opacity=".3"/>
+          <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+        </radialGradient>
+        <linearGradient id="ms-streak" gradientUnits="userSpaceOnUse" x1="7" y1="93" x2="42.5" y2="57.5">
+          <stop offset="0" stop-color="#3FE0FF" stop-opacity="0"/>
+          <stop offset=".55" stop-color="#3FE0FF"/>
+          <stop offset="1" stop-color="#fff"/>
+        </linearGradient>
+        <clipPath id="ms-clip"><rect width="100" height="100" rx="26"/></clipPath>
+      </defs>
+      <rect width="100" height="100" rx="26" fill="url(#ms-tile)"/>
+      <rect width="100" height="100" rx="26" fill="url(#ms-light)"/>
+      <g clip-path="url(#ms-clip)">
+        <polygon points="7.1,92.9 46.7,61.7 38.3,53.3" fill="url(#ms-streak)"/>
+        <circle cx="42.5" cy="57.5" r="6" fill="#fff"/>
+      </g>
+      <g fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round">
+        <circle cx="50" cy="50" r="27" stroke-dasharray="28.27 14.14" stroke-dashoffset="-7.07"/>
+        <path d="M50 17.5V9.5M82.5 50H90.5M50 82.5V90.5M17.5 50H9.5"/>
+      </g>
+      <path d="M37 50H63M50 37V63" stroke="#3FE0FF" stroke-opacity=".35" stroke-width="12" stroke-linecap="round"/>
+      <path d="M37 50H63M50 37V63" stroke="#fff" stroke-width="9.8" stroke-linecap="round"/>
+      <path d="M63.5 31.5Q64.9 35.1 68.5 36.5Q64.9 37.9 63.5 41.5Q62.1 37.9 58.5 36.5Q62.1 35.1 63.5 31.5Z" fill="#fff"/>
+    </svg>
+  </div>
+  <script>
+    // Remove the pre-loader once Flutter has painted (see
+    // https://docs.flutter.dev/platform-integration/web/initialization).
+    window.addEventListener('flutter-first-frame', function () {
+      // Read by lib/core/services/platform/first_frame_web.dart so the splash
+      // starts animating only once it is actually visible.
+      window.__msFirstFrameShown = true;
+      var loader = document.getElementById('boot-loader');
+      if (loader) loader.remove();
+    });
+  </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

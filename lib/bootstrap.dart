@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -11,16 +10,15 @@ import 'core/di/core_providers.dart';
 import 'core/services/logging/app_logger.dart';
 import 'core/services/storage/encryption_key_provider.dart';
 import 'core/services/storage/hive_local_database.dart';
-import 'screens/error/startup_error_app.dart';
 
 /// Composition root: creates platform-bound services, installs global error
 /// handlers and starts the widget tree with the DI container configured.
 ///
-/// Only work that *must* precede the first frame happens here (opening the
-/// encrypted database, because the saved theme is needed immediately).
-/// Slower start-up tasks (audio, ads, Drive) run behind the splash screen
-/// in Phase 2.
-Future<void> bootstrap() async {
+/// Nothing slow or fallible happens here, so the first frame (the splash
+/// screen) appears as fast as possible. All initialisation — database,
+/// theme, version check and, in later phases, Drive/audio/ads — runs in
+/// the splash pipeline, which also owns error recovery.
+void bootstrap() {
   WidgetsFlutterBinding.ensureInitialized();
 
   final config = AppConfig.fromEnvironment();
@@ -46,17 +44,12 @@ Future<void> bootstrap() async {
     logger: logger,
   );
 
-  try {
-    await database.init();
-  } on Object catch (e, st) {
-    logger.error('Start-up failed', error: e, stackTrace: st);
-    runApp(StartupErrorApp(onRetry: () => unawaited(bootstrap())));
-    return;
-  }
-
   logger.info('Starting ${config.appName} (${config.environment.name})');
   runApp(
     ProviderScope(
+      // Failures are surfaced and retried explicitly (splash, repositories);
+      // silent background retries would hide problems and waste battery.
+      retry: noRetry,
       overrides: [
         appConfigProvider.overrideWithValue(config),
         appLoggerProvider.overrideWithValue(logger),

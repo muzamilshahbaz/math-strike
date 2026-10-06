@@ -5,7 +5,7 @@ import 'core/constants/app_durations.dart';
 import 'core/di/core_providers.dart';
 import 'core/theme/app_theme.dart';
 import 'core/widgets/accessibility_media_scope.dart';
-import 'features/settings/presentation/controllers/appearance_controller.dart';
+import 'features/settings/presentation/controllers/effective_appearance.dart';
 import 'routing/app_router.dart';
 
 /// Root widget: wires theme, accessibility and routing together.
@@ -16,7 +16,7 @@ class MathStrikeApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final config = ref.watch(appConfigProvider);
-    final appearance = ref.watch(appearanceControllerProvider);
+    final appearance = ref.watch(effectiveAppearanceProvider);
     final router = ref.watch(appRouterProvider);
     final seed = appearance.gameTheme.seedColor;
 

@@ -9,8 +9,9 @@ enemies reach them. Supports Android, iOS, Windows, macOS, Linux and Web.
 | Phase | Scope | Status |
 |------:|-------|--------|
 | 1 | Architecture, packages, theme, routing, DI | ✅ Done |
-| 2 | Splash screen & initialization pipeline | ⏳ Next |
-| 3–17 | See the project brief | Planned |
+| 2 | Splash screen & start-up pipeline | ✅ Done |
+| 3 | Google Sign-In, Drive backup detection, restore | ⏳ Next |
+| 4–17 | See the project brief | Planned |
 
 ## Getting started
 
@@ -30,7 +31,17 @@ Quality gates:
 
 ```bash
 flutter analyze
-flutter test
+flutter test                               # all tests
+flutter test --exclude-tags golden         # skip pixel tests (other OSes)
+flutter test --update-goldens --tags golden # regenerate golden images
+```
+
+Preview a release web build locally (caching disabled, so a reload always
+runs the latest build):
+
+```bash
+flutter build web --release
+python tool/serve_web.py        # http://127.0.0.1:8765
 ```
 
 > **Windows desktop:** Flutter needs symlink support for plugins. Enable
@@ -61,24 +72,28 @@ presentation  ──▶  domain  ◀──  data
 ```
 lib/
   main.dart               entry point → bootstrap()
-  bootstrap.dart          composition root: error handlers, DB, ProviderScope
+  bootstrap.dart          composition root: error handlers, ProviderScope
   app.dart                MaterialApp.router: theme + accessibility + router
   core/
     config/               AppConfig (Freezed), AppEnvironment
     constants/            app constants, breakpoints, durations
-    di/                   core providers (config, logger, database)
+    di/                   core providers (config, logger, database, app info)
     errors/               AppException → Failure, Result<T>
     services/
+      app_info/           version (package_info_plus) + launch tracking
       logging/            AppLogger interface + console impl
       storage/            LocalDatabase / KeyValueStore (encrypted Hive CE)
-    theme/                AppTheme (M3), GamePalette, tokens, GameThemeId
-    widgets/              shared widgets, responsive helpers
+    startup/              StartupTask model
+    theme/                AppTheme (M3), GamePalette, BrandColors, tokens
+    widgets/              shared widgets: brand logo, responsive helpers
   features/
-    settings/             first vertical slice (appearance & accessibility)
-      domain/ data/ presentation/ settings_providers.dart
-  routing/                GoRouter + route constants
+    settings/             appearance & accessibility
+    splash/               animated splash + start-up pipeline
+      domain/ presentation/ splash_providers.dart (task registry)
+  routing/                GoRouter, route constants, start-up guard
   screens/                app-level screens: shell, placeholders, errors
 test/                     mirrors lib/; helpers/ holds shared fakes
+  goldens/                pixel tests (tag: golden)
 ```
 
 New features follow the `settings/` template:
@@ -116,6 +131,31 @@ Material 3 window size classes (`WindowSize`):
 | ≥ 1200 | Extended sidebar with branding |
 
 Keyboard: `Alt+1…5` switches tabs.
+
+### Start-up pipeline
+
+`bootstrap()` does nothing slow or fallible, so the first frame appears at
+once. Everything else runs behind the animated splash as an ordered list
+of `StartupTask`s (`features/splash/splash_providers.dart`):
+
+| Task | Critical | Purpose |
+|---|---|---|
+| `database` | yes | Open the encrypted Hive database |
+| `theme` | no | Load the saved appearance |
+| `version` | no | Read app version, record launch (first launch / upgrade) |
+
+* **Critical** failures stop start-up and show *Try again*; retry resumes
+  at the failed task without re-running completed ones.
+* **Non-critical** failures are logged and skipped, so the game always
+  starts offline. Ads, Drive and audio register here as non-critical tasks
+  in Phases 3, 8 and 12.
+* Each task has a timeout; progress is weighted per task.
+* The splash stays up at least 2.2 s, measured from when its first frame is
+  actually *rasterized* (on the web, the engine may still be loading behind
+  the HTML pre-loader in `web/index.html`).
+* A router guard sends every location, including web deep links, to
+  `/splash?from=…` until start-up completes, then on to the original
+  destination.
 
 ### Accessibility
 

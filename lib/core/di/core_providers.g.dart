@@ -100,17 +100,23 @@ final class AppLoggerProvider
 
 String _$appLoggerHash() => r'db8da58f3274f7a3444e1844a29e55952d06e902';
 
-/// The opened local database. Bound in `bootstrap.dart` after `init()`.
+/// The local database instance (not necessarily opened yet). Bound in
+/// `bootstrap.dart`. Prefer [openedLocalDatabaseProvider] to know when it
+/// is ready.
 
 @ProviderFor(localDatabase)
 final localDatabaseProvider = LocalDatabaseProvider._();
 
-/// The opened local database. Bound in `bootstrap.dart` after `init()`.
+/// The local database instance (not necessarily opened yet). Bound in
+/// `bootstrap.dart`. Prefer [openedLocalDatabaseProvider] to know when it
+/// is ready.
 
 final class LocalDatabaseProvider
     extends $FunctionalProvider<LocalDatabase, LocalDatabase, LocalDatabase>
     with $Provider<LocalDatabase> {
-  /// The opened local database. Bound in `bootstrap.dart` after `init()`.
+  /// The local database instance (not necessarily opened yet). Bound in
+  /// `bootstrap.dart`. Prefer [openedLocalDatabaseProvider] to know when it
+  /// is ready.
   LocalDatabaseProvider._()
     : super(
         from: null,
@@ -145,3 +151,229 @@ final class LocalDatabaseProvider
 }
 
 String _$localDatabaseHash() => r'5a7583418cf772f43418f9c2ae21f7298236d0a9';
+
+/// Opens the local database once. Awaited by the splash pipeline; anything
+/// that reads a store must run after this completes.
+
+@ProviderFor(openedLocalDatabase)
+final openedLocalDatabaseProvider = OpenedLocalDatabaseProvider._();
+
+/// Opens the local database once. Awaited by the splash pipeline; anything
+/// that reads a store must run after this completes.
+
+final class OpenedLocalDatabaseProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<LocalDatabase>,
+          LocalDatabase,
+          FutureOr<LocalDatabase>
+        >
+    with $FutureModifier<LocalDatabase>, $FutureProvider<LocalDatabase> {
+  /// Opens the local database once. Awaited by the splash pipeline; anything
+  /// that reads a store must run after this completes.
+  OpenedLocalDatabaseProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: noRetry,
+        name: r'openedLocalDatabaseProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$openedLocalDatabaseHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<LocalDatabase> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<LocalDatabase> create(Ref ref) {
+    return openedLocalDatabase(ref);
+  }
+}
+
+String _$openedLocalDatabaseHash() =>
+    r'dcef89b0e3126e7810f87fc0c35c00166247e254';
+
+/// Platform app-info reader.
+
+@ProviderFor(appInfoService)
+final appInfoServiceProvider = AppInfoServiceProvider._();
+
+/// Platform app-info reader.
+
+final class AppInfoServiceProvider
+    extends $FunctionalProvider<AppInfoService, AppInfoService, AppInfoService>
+    with $Provider<AppInfoService> {
+  /// Platform app-info reader.
+  AppInfoServiceProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'appInfoServiceProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$appInfoServiceHash();
+
+  @$internal
+  @override
+  $ProviderElement<AppInfoService> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  AppInfoService create(Ref ref) {
+    return appInfoService(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(AppInfoService value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AppInfoService>(value),
+    );
+  }
+}
+
+String _$appInfoServiceHash() => r'9c315e9484d484ad30b476cae3b18b264f23c2f8';
+
+/// The installed build's name and version.
+
+@ProviderFor(appInfo)
+final appInfoProvider = AppInfoProvider._();
+
+/// The installed build's name and version.
+
+final class AppInfoProvider
+    extends $FunctionalProvider<AsyncValue<AppInfo>, AppInfo, FutureOr<AppInfo>>
+    with $FutureModifier<AppInfo>, $FutureProvider<AppInfo> {
+  /// The installed build's name and version.
+  AppInfoProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: noRetry,
+        name: r'appInfoProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$appInfoHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<AppInfo> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<AppInfo> create(Ref ref) {
+    return appInfo(ref);
+  }
+}
+
+String _$appInfoHash() => r'6958fb1ba2f1e294d2c7e8c2543923a7f7d08305';
+
+/// Launch history repository. Requires an opened database.
+
+@ProviderFor(launchRepository)
+final launchRepositoryProvider = LaunchRepositoryProvider._();
+
+/// Launch history repository. Requires an opened database.
+
+final class LaunchRepositoryProvider
+    extends
+        $FunctionalProvider<
+          LaunchRepository,
+          LaunchRepository,
+          LaunchRepository
+        >
+    with $Provider<LaunchRepository> {
+  /// Launch history repository. Requires an opened database.
+  LaunchRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'launchRepositoryProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$launchRepositoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<LaunchRepository> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  LaunchRepository create(Ref ref) {
+    return launchRepository(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(LaunchRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<LaunchRepository>(value),
+    );
+  }
+}
+
+String _$launchRepositoryHash() => r'a2b693d71123f8df9521533a7197043fb63350a3';
+
+/// This run's launch info. Recorded exactly once per app run.
+
+@ProviderFor(launchInfo)
+final launchInfoProvider = LaunchInfoProvider._();
+
+/// This run's launch info. Recorded exactly once per app run.
+
+final class LaunchInfoProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<LaunchInfo>,
+          LaunchInfo,
+          FutureOr<LaunchInfo>
+        >
+    with $FutureModifier<LaunchInfo>, $FutureProvider<LaunchInfo> {
+  /// This run's launch info. Recorded exactly once per app run.
+  LaunchInfoProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: noRetry,
+        name: r'launchInfoProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$launchInfoHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<LaunchInfo> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<LaunchInfo> create(Ref ref) {
+    return launchInfo(ref);
+  }
+}
+
+String _$launchInfoHash() => r'dbee821ab249cfeac2db2b22ebafd9fd7a0e9a5f';

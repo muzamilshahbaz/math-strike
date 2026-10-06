@@ -5,6 +5,7 @@ import 'package:math_strike/core/constants/app_constants.dart';
 import 'package:math_strike/core/services/storage/in_memory_local_database.dart';
 import 'package:math_strike/core/services/storage/key_value_store.dart';
 import 'package:math_strike/core/services/storage/local_database.dart';
+import 'package:math_strike/core/widgets/brand/math_strike_wordmark.dart';
 
 import 'helpers/test_app.dart';
 
@@ -32,7 +33,7 @@ void main() {
 
       final rail = tester.widget<NavigationRail>(find.byType(NavigationRail));
       expect(rail.extended, isTrue);
-      expect(find.text(AppConstants.appName), findsOneWidget);
+      expect(find.byType(MathStrikeWordmark), findsOneWidget);
     });
   });
 

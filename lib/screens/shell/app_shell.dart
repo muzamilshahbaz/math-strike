@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/app_tokens.dart';
 import '../../core/theme/theme_context.dart';
+import '../../core/widgets/brand/math_strike_logo.dart';
+import '../../core/widgets/brand/math_strike_wordmark.dart';
 import '../../core/widgets/responsive/window_size.dart';
 import 'app_destinations.dart';
 
@@ -14,7 +16,7 @@ import 'app_destinations.dart';
 /// * medium / expanded (tablets): collapsed [NavigationRail]
 /// * large (desktop / wide web): extended sidebar
 ///
-/// `Alt + 1…5` switches tabs on keyboards.
+/// `Alt + 1â€¦5` switches tabs on keyboards.
 class AppShell extends StatelessWidget {
   /// Creates the shell for [navigationShell].
   const AppShell({required this.navigationShell, super.key});
@@ -101,6 +103,20 @@ class _SideNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // On short windows (e.g. phones in landscape) the destinations may not
+    // fit vertically: let the rail scroll instead of overflowing, while
+    // still filling the full height when there is room.
+    return LayoutBuilder(
+      builder: (context, constraints) => SingleChildScrollView(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: constraints.maxHeight),
+          child: IntrinsicHeight(child: _rail()),
+        ),
+      ),
+    );
+  }
+
+  Widget _rail() {
     return NavigationRail(
       extended: extended,
       minExtendedWidth: AppSizes.sidebarWidth,
@@ -137,19 +153,7 @@ class _Brand extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final mark = Container(
-      width: 44,
-      height: 44,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [context.colors.primary, context.colors.tertiary],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: AppRadii.mdAll,
-      ),
-      child: Icon(Icons.calculate_rounded, color: context.colors.onPrimary),
-    );
+    const mark = MathStrikeLogo();
     return Semantics(
       label: AppConstants.appName,
       excludeSemantics: true,
@@ -159,9 +163,11 @@ class _Brand extends StatelessWidget {
               children: [
                 mark,
                 const SizedBox(width: AppSpacing.smd),
-                Text(
-                  AppConstants.appName,
-                  style: context.textStyles.titleLarge,
+                // Official wordmark; "MATH" follows the theme so it reads on
+                // both light and dark surfaces.
+                MathStrikeWordmark(
+                  height: 15,
+                  mathColor: context.colors.onSurface,
                 ),
               ],
             )

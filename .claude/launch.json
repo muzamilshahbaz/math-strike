@@ -4,7 +4,7 @@
     {
       "name": "web-release",
       "runtimeExecutable": "python",
-      "runtimeArgs": ["-m", "http.server", "8765", "--directory", "build/web"],
+      "runtimeArgs": ["tool/serve_web.py", "8765"],
       "port": 8765
     }
   ]

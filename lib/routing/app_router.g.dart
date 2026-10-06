@@ -12,8 +12,11 @@ part of 'app_router.dart';
 ///
 /// Top-level tabs live in a [StatefulShellRoute] so each tab keeps its own
 /// navigation stack and scroll position. Gameplay is a sibling route so it
-/// renders full-screen without navigation chrome. Redirect guards for
-/// sign-in (Phase 3) and onboarding (Phase 4) plug into `redirect`.
+/// renders full-screen without navigation chrome.
+///
+/// Guards (see [startupRedirect]): until start-up completes every location
+/// redirects to the splash, remembering where the user was going. Sign-in
+/// (Phase 3) and onboarding (Phase 4) guards are added the same way.
 
 @ProviderFor(appRouter)
 final appRouterProvider = AppRouterProvider._();
@@ -22,8 +25,11 @@ final appRouterProvider = AppRouterProvider._();
 ///
 /// Top-level tabs live in a [StatefulShellRoute] so each tab keeps its own
 /// navigation stack and scroll position. Gameplay is a sibling route so it
-/// renders full-screen without navigation chrome. Redirect guards for
-/// sign-in (Phase 3) and onboarding (Phase 4) plug into `redirect`.
+/// renders full-screen without navigation chrome.
+///
+/// Guards (see [startupRedirect]): until start-up completes every location
+/// redirects to the splash, remembering where the user was going. Sign-in
+/// (Phase 3) and onboarding (Phase 4) guards are added the same way.
 
 final class AppRouterProvider
     extends $FunctionalProvider<GoRouter, GoRouter, GoRouter>
@@ -32,8 +38,11 @@ final class AppRouterProvider
   ///
   /// Top-level tabs live in a [StatefulShellRoute] so each tab keeps its own
   /// navigation stack and scroll position. Gameplay is a sibling route so it
-  /// renders full-screen without navigation chrome. Redirect guards for
-  /// sign-in (Phase 3) and onboarding (Phase 4) plug into `redirect`.
+  /// renders full-screen without navigation chrome.
+  ///
+  /// Guards (see [startupRedirect]): until start-up completes every location
+  /// redirects to the splash, remembering where the user was going. Sign-in
+  /// (Phase 3) and onboarding (Phase 4) guards are added the same way.
   AppRouterProvider._()
     : super(
         from: null,
@@ -67,4 +76,4 @@ final class AppRouterProvider
   }
 }
 
-String _$appRouterHash() => r'c56161382cc0c688b98d49dc7b9277b8d1cc935c';
+String _$appRouterHash() => r'af2d6e2832b4f6c9a54a7c1a71289e31427cbc57';

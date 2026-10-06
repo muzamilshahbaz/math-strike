@@ -1,10 +1,10 @@
-{
-    "name": "math_strike",
-    "short_name": "math_strike",
+﻿{
+    "name": "Math Strike",
+    "short_name": "Math Strike",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
+    "background_color": "#0B0820",
+    "theme_color": "#0B0820",
     "description": "Math Strike - an offline-first educational math shooting game.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,

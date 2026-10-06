@@ -16,4 +16,7 @@ abstract final class AppConstants {
 abstract final class SettingsKeys {
   /// Serialized appearance/accessibility settings.
   static const String appearance = 'appearance';
+
+  /// Launch counter and last-run version.
+  static const String launchInfo = 'launch_info';
 }

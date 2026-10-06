@@ -18,7 +18,10 @@ final class HiveLocalDatabase implements LocalDatabase {
 
   @override
   Future<void> init() async {
-    if (_boxes.isNotEmpty) return;
+    // Fully open already: nothing to do. A partially opened database (from a
+    // failed earlier attempt) is reopened from scratch.
+    if (_boxes.length == StorageBox.values.length) return;
+    _boxes.clear();
     try {
       await Hive.initFlutter(AppConstants.databaseDirectory);
       final cipher = HiveAesCipher(await _keyProvider.obtainKey());
@@ -27,8 +30,10 @@ final class HiveLocalDatabase implements LocalDatabase {
       }
       _logger.info('Local database ready (${_boxes.length} boxes)');
     } on AppException {
+      _boxes.clear();
       rethrow;
     } on Object catch (e, st) {
+      _boxes.clear();
       throw StorageException(
         'Failed to open local database',
         cause: e,
