@@ -1,0 +1,21 @@
+# Normalise line endings: LF in the repository and working tree, so Dart
+# formatting and macOS/Linux/iOS build scripts behave identically everywhere.
+* text=auto eol=lf
+
+# Windows-only scripts keep CRLF.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary assets.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.ttf binary
+*.otf binary
+*.mp3 binary
+*.wav binary
+*.ogg binary
+*.jar binary

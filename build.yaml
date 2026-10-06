@@ -1,0 +1,14 @@
+# Code generation options shared by freezed, json_serializable and
+# riverpod_generator.
+targets:
+  $default:
+    builders:
+      json_serializable:
+        options:
+          # Nested models are serialised to plain maps so that backup
+          # snapshots (Phase 13) are valid JSON without extra work.
+          explicit_to_json: true
+          # Unknown keys are tolerated so older app versions can read
+          # newer backups without crashing.
+          disallow_unrecognized_keys: false
+          include_if_null: false
