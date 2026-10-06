@@ -10,8 +10,9 @@ enemies reach them. Supports Android, iOS, Windows, macOS, Linux and Web.
 |------:|-------|--------|
 | 1 | Architecture, packages, theme, routing, DI | ✅ Done |
 | 2 | Splash screen & start-up pipeline | ✅ Done |
-| 3 | Google Sign-In, Drive backup detection, restore | ⏳ Next |
-| 4–17 | See the project brief | Planned |
+| 3 | Google Sign-In, Drive backup detection, restore | ✅ Done |
+| 4 | Onboarding (profile) | ⏳ Next |
+| 5–17 | See the project brief | Planned |
 
 ## Getting started
 
@@ -26,6 +27,16 @@ Environment selection (defaults to `development`):
 ```bash
 flutter run --dart-define=APP_ENV=production
 ```
+
+Google Sign-In / Drive credentials (see [docs/google_setup.md](docs/google_setup.md)):
+
+```bash
+flutter run --dart-define-from-file=config/google.json
+```
+
+Without credentials, development builds use a labelled **demo account** and
+an in-memory Drive. Add `--dart-define=DEMO_BACKUP=true` to start with a
+sample backup and see the restore flow.
 
 Quality gates:
 
@@ -87,6 +98,10 @@ lib/
     theme/                AppTheme (M3), GamePalette, BrandColors, tokens
     widgets/              shared widgets: brand logo, responsive helpers
   features/
+    authentication/       Google sign-in gateways (plugin/desktop/demo),
+                          account link, sign-in screen
+    backup/               Drive app-folder data source, snapshot codec,
+                          restore flow
     settings/             appearance & accessibility
     splash/               animated splash + start-up pipeline
       domain/ presentation/ splash_providers.dart (task registry)
@@ -156,6 +171,28 @@ of `StartupTask`s (`features/splash/splash_providers.dart`):
 * A router guard sends every location, including web deep links, to
   `/splash?from=…` until start-up completes, then on to the original
   destination.
+
+### First launch, sign-in and restore
+
+The router gate (`routing/app_gate.dart`) enforces, in order:
+
+```text
+splash → sign in (mandatory) → backup check / restore → onboarding → app
+```
+
+* **Sign-in** links the device to a Google account (`AccountLink`, stored in
+  the device-local box). The gate checks the *link*, not a live session, so
+  after the first sign-in the game is fully playable **offline**.
+* **Platforms:** `google_sign_in` on Android/iOS/macOS/web (web uses a single
+  authorisation pop-up); a loopback OAuth flow with the system browser on
+  Windows/Linux (refresh token kept in the OS keystore).
+* **Scope:** only `drive.appdata` (a hidden, app-private Drive folder).
+* **Restore:** if a backup exists it is restored automatically with progress;
+  the download is fully validated before any local data is replaced, and
+  device-local data is never overwritten. `LocalDataEpoch` makes cached
+  controllers reload afterwards.
+* **Backup format v1:** versioned JSON envelope (`BackupSnapshotCodec`);
+  Phase 13 adds encryption and incremental backups as v2.
 
 ### Accessibility
 

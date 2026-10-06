@@ -21,6 +21,9 @@ sealed class Failure with _$Failure {
   /// Sign-in failed, was cancelled, or credentials expired.
   const factory Failure.auth(String message, {Object? cause}) = AuthFailure;
 
+  /// The user dismissed a sign-in or consent prompt.
+  const factory Failure.authCancelled(String message) = AuthCancelledFailure;
+
   /// Data was malformed or failed validation.
   const factory Failure.dataFormat(String message, {Object? cause}) =
       DataFormatFailure;
@@ -39,6 +42,7 @@ sealed class Failure with _$Failure {
       message,
       cause: cause,
     ),
+    AuthCancelledException(:final message) => Failure.authCancelled(message),
     AuthException(:final message, :final cause) => Failure.auth(
       message,
       cause: cause,

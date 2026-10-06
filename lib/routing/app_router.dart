@@ -3,12 +3,15 @@ import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../core/di/core_providers.dart';
+import '../features/authentication/presentation/screens/sign_in_screen.dart';
+import '../features/backup/presentation/screens/restore_screen.dart';
 import '../features/settings/presentation/screens/settings_screen.dart';
-import '../features/splash/presentation/controllers/startup_controller.dart';
 import '../features/splash/presentation/screens/splash_screen.dart';
 import '../screens/error/not_found_screen.dart';
+import '../screens/placeholder/onboarding_placeholder_screen.dart';
 import '../screens/placeholder/placeholder_screen.dart';
 import '../screens/shell/app_shell.dart';
+import 'app_gate.dart';
 import 'app_routes.dart';
 
 part 'app_router.g.dart';
@@ -19,35 +22,40 @@ part 'app_router.g.dart';
 /// navigation stack and scroll position. Gameplay is a sibling route so it
 /// renders full-screen without navigation chrome.
 ///
-/// Guards (see [startupRedirect]): until start-up completes every location
-/// redirects to the splash, remembering where the user was going. Sign-in
-/// (Phase 3) and onboarding (Phase 4) guards are added the same way.
+/// Every navigation passes through [appRedirect]: splash → mandatory
+/// sign-in → backup check / restore → onboarding → app.
 @Riverpod(keepAlive: true)
 GoRouter appRouter(Ref ref) {
-  // Re-evaluates redirects when start-up completes, without rebuilding the
-  // router (which would reset navigation state).
-  final startupDone = ValueNotifier<bool>(
-    ref.read(startupControllerProvider).isCompleted,
-  );
+  // Re-evaluates redirects when the gate changes, without rebuilding the
+  // router (which would reset navigation state). ValueNotifier only
+  // notifies when the (value-equal) gate actually changes.
+  final gate = ValueNotifier<AppGate>(ref.read(appGateProvider));
   ref
-    // ValueNotifier only notifies when the value actually changes.
-    ..listen(
-      startupControllerProvider,
-      (_, next) => startupDone.value = next.isCompleted,
-    )
-    ..onDispose(startupDone.dispose);
+    ..listen(appGateProvider, (_, next) => gate.value = next)
+    ..onDispose(gate.dispose);
 
   final router = GoRouter(
     initialLocation: AppRoutes.splash,
     debugLogDiagnostics: !ref.read(appConfigProvider).isProduction,
-    refreshListenable: startupDone,
-    redirect: (context, state) =>
-        startupRedirect(uri: state.uri, startupCompleted: startupDone.value),
+    refreshListenable: gate,
+    redirect: (context, state) => appRedirect(uri: state.uri, gate: gate.value),
     errorBuilder: (context, state) => NotFoundScreen(location: state.uri.path),
     routes: [
       GoRoute(
         path: AppRoutes.splash,
         builder: (context, state) => const SplashScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.signIn,
+        builder: (context, state) => const SignInScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.accountSetup,
+        builder: (context, state) => const RestoreScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.onboarding,
+        builder: (context, state) => const OnboardingPlaceholderScreen(),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => AppShell(navigationShell: shell),
@@ -110,34 +118,6 @@ GoRouter appRouter(Ref ref) {
   );
   ref.onDispose(router.dispose);
   return router;
-}
-
-/// Start-up guard.
-///
-/// * Before completion: any location except the splash redirects to
-///   `/splash?from=<location>`.
-/// * After completion: the splash forwards to `from` (or home).
-///
-/// `from` must be an in-app absolute path; anything else falls back to home
-/// so crafted links cannot redirect outside the app.
-@visibleForTesting
-String? startupRedirect({required Uri uri, required bool startupCompleted}) {
-  final atSplash = uri.path == AppRoutes.splash;
-  if (!startupCompleted) {
-    if (atSplash) return null;
-    return Uri(
-      path: AppRoutes.splash,
-      queryParameters: {AppRoutes.fromParam: uri.toString()},
-    ).toString();
-  }
-  if (!atSplash) return null;
-  final from = uri.queryParameters[AppRoutes.fromParam];
-  final isSafe =
-      from != null &&
-      from.startsWith('/') &&
-      !from.startsWith('//') &&
-      !from.startsWith(AppRoutes.splash);
-  return isSafe ? from : AppRoutes.home;
 }
 
 StatefulShellBranch _branch(String path, WidgetBuilder builder) =>

@@ -7,6 +7,15 @@ abstract final class AppRoutes {
   /// Query parameter on [splash] holding the originally requested location.
   static const String fromParam = 'from';
 
+  /// Mandatory Google sign-in (Phase 3).
+  static const String signIn = '/sign-in';
+
+  /// First-launch backup check and restore (Phase 3).
+  static const String accountSetup = '/account-setup';
+
+  /// Profile creation for new players (Phase 4).
+  static const String onboarding = '/onboarding';
+
   /// Home dashboard (Phase 5).
   static const String home = '/home';
 

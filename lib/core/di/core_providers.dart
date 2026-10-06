@@ -61,7 +61,7 @@ Future<AppInfo> appInfo(Ref ref) => ref.watch(appInfoServiceProvider).load();
 /// Launch history repository. Requires an opened database.
 @Riverpod(keepAlive: true)
 LaunchRepository launchRepository(Ref ref) => LaunchRepositoryImpl(
-  store: ref.watch(localDatabaseProvider).store(StorageBox.settings),
+  store: ref.watch(localDatabaseProvider).store(StorageBox.device),
   logger: ref.watch(appLoggerProvider),
 );
 
@@ -71,4 +71,17 @@ Future<LaunchInfo> launchInfo(Ref ref) async {
   final repository = ref.watch(launchRepositoryProvider);
   final app = await ref.watch(appInfoProvider.future);
   return repository.recordLaunch(app);
+}
+
+/// Incremented whenever local data is replaced wholesale (restore, reset).
+///
+/// Controllers that cache data read from the local database watch this in
+/// `build()`, so they reload automatically after a restore.
+@Riverpod(keepAlive: true)
+class LocalDataEpoch extends _$LocalDataEpoch {
+  @override
+  int build() => 0;
+
+  /// Signals that local data was replaced.
+  void bump() => state++;
 }

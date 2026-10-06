@@ -16,7 +16,11 @@ part 'appearance_controller.g.dart';
 @Riverpod(keepAlive: true)
 class AppearanceController extends _$AppearanceController {
   @override
-  AppearanceSettings build() => ref.watch(appearanceRepositoryProvider).load();
+  AppearanceSettings build() {
+    // Reload when local data is replaced (e.g. restored from a backup).
+    ref.watch(localDataEpochProvider);
+    return ref.watch(appearanceRepositoryProvider).load();
+  }
 
   /// Sets light / dark / system mode.
   Future<void> setThemeMode(ThemeMode mode) =>

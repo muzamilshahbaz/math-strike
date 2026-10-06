@@ -14,7 +14,6 @@ part of 'splash_providers.dart';
 /// theme and launch record need the database). Later phases register their
 /// own tasks here:
 ///
-/// * Phase 3 – Google account & Drive backup detection
 /// * Phase 8 – audio preloading
 /// * Phase 12 – ads SDK (non-critical: the game must start offline)
 
@@ -27,7 +26,6 @@ final startupTasksProvider = StartupTasksProvider._();
 /// theme and launch record need the database). Later phases register their
 /// own tasks here:
 ///
-/// * Phase 3 – Google account & Drive backup detection
 /// * Phase 8 – audio preloading
 /// * Phase 12 – ads SDK (non-critical: the game must start offline)
 
@@ -45,7 +43,6 @@ final class StartupTasksProvider
   /// theme and launch record need the database). Later phases register their
   /// own tasks here:
   ///
-  /// * Phase 3 – Google account & Drive backup detection
   /// * Phase 8 – audio preloading
   /// * Phase 12 – ads SDK (non-critical: the game must start offline)
   StartupTasksProvider._()
@@ -82,7 +79,7 @@ final class StartupTasksProvider
   }
 }
 
-String _$startupTasksHash() => r'37d548cef458472853e5762f4be3b2220248bc48';
+String _$startupTasksHash() => r'5798716838a2050b95ca4880f49fb6e091fdc37b';
 
 /// Minimum time the splash stays visible, so the brand animation can play
 /// even when start-up is instant: the 1.8 s logo sequence plus a short hold.

@@ -16,7 +16,13 @@ abstract final class AppConstants {
 abstract final class SettingsKeys {
   /// Serialized appearance/accessibility settings.
   static const String appearance = 'appearance';
+}
 
+/// Storage keys used inside the device-local `device` box.
+abstract final class DeviceKeys {
   /// Launch counter and last-run version.
   static const String launchInfo = 'launch_info';
+
+  /// The Google account this installation is linked to.
+  static const String accountLink = 'account_link';
 }

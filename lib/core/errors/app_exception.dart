@@ -38,6 +38,13 @@ final class AuthException extends AppException {
   const AuthException(super.message, {super.cause, super.stackTrace});
 }
 
+/// The user dismissed a sign-in or consent prompt. Not an error: callers
+/// should simply let the user try again.
+final class AuthCancelledException extends AppException {
+  /// Creates an [AuthCancelledException].
+  const AuthCancelledException([super.message = 'Sign-in was cancelled']);
+}
+
 /// Data could not be parsed or failed validation.
 final class DataFormatException extends AppException {
   /// Creates a [DataFormatException].

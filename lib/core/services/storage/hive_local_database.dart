@@ -1,4 +1,4 @@
-﻿import 'package:hive_ce_flutter/hive_ce_flutter.dart';
+import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 
 import '../../constants/app_constants.dart';
 import '../../errors/app_exception.dart';
@@ -8,7 +8,7 @@ import 'key_value_store.dart';
 import 'local_database.dart';
 
 /// [LocalDatabase] implemented with Hive CE, AES-256 encrypted at rest.
-final class HiveLocalDatabase implements LocalDatabase {
+final class HiveLocalDatabase with SnapshotSupport implements LocalDatabase {
   /// Creates the database. Call [init] before use.
   HiveLocalDatabase({required this._keyProvider, required this._logger});
 

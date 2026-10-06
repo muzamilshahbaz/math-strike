@@ -54,7 +54,7 @@ final class AppearanceControllerProvider
 }
 
 String _$appearanceControllerHash() =>
-    r'3bb9831a7fafe4d7865aab0c4a08ab1c609cf204';
+    r'f630a38f927b55c47285a48cbc85f93b094f75e4';
 
 /// Holds the current [AppearanceSettings] and persists every change.
 ///

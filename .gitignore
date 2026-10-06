@@ -46,3 +46,6 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+# Google OAuth client configuration (copy config/google.example.json)
+/config/google.json

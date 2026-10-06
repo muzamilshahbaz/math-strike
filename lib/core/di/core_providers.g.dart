@@ -333,7 +333,7 @@ final class LaunchRepositoryProvider
   }
 }
 
-String _$launchRepositoryHash() => r'a2b693d71123f8df9521533a7197043fb63350a3';
+String _$launchRepositoryHash() => r'e9b87356e9ed5e2e2a5918d9461a4b48fc8565d4';
 
 /// This run's launch info. Recorded exactly once per app run.
 
@@ -377,3 +377,73 @@ final class LaunchInfoProvider
 }
 
 String _$launchInfoHash() => r'dbee821ab249cfeac2db2b22ebafd9fd7a0e9a5f';
+
+/// Incremented whenever local data is replaced wholesale (restore, reset).
+///
+/// Controllers that cache data read from the local database watch this in
+/// `build()`, so they reload automatically after a restore.
+
+@ProviderFor(LocalDataEpoch)
+final localDataEpochProvider = LocalDataEpochProvider._();
+
+/// Incremented whenever local data is replaced wholesale (restore, reset).
+///
+/// Controllers that cache data read from the local database watch this in
+/// `build()`, so they reload automatically after a restore.
+final class LocalDataEpochProvider
+    extends $NotifierProvider<LocalDataEpoch, int> {
+  /// Incremented whenever local data is replaced wholesale (restore, reset).
+  ///
+  /// Controllers that cache data read from the local database watch this in
+  /// `build()`, so they reload automatically after a restore.
+  LocalDataEpochProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'localDataEpochProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$localDataEpochHash();
+
+  @$internal
+  @override
+  LocalDataEpoch create() => LocalDataEpoch();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(int value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<int>(value),
+    );
+  }
+}
+
+String _$localDataEpochHash() => r'0b45b62e0ba42540f4b2b1e1e624082dd7ef23c3';
+
+/// Incremented whenever local data is replaced wholesale (restore, reset).
+///
+/// Controllers that cache data read from the local database watch this in
+/// `build()`, so they reload automatically after a restore.
+
+abstract class _$LocalDataEpoch extends $Notifier<int> {
+  int build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<int, int>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<int, int>,
+              int,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}

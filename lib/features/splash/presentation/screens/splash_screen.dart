@@ -2,13 +2,13 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/di/core_providers.dart';
 import '../../../../core/theme/app_tokens.dart';
 import '../../../../core/theme/brand_colors.dart';
 import '../../../../core/theme/theme_context.dart';
+import '../../../../core/widgets/brand/brand_backdrop.dart';
 import '../../../../core/widgets/brand/math_strike_logo.dart';
 import '../../../../core/widgets/brand/math_strike_wordmark.dart';
 import '../../domain/entities/startup_state.dart';
@@ -169,106 +169,88 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 MathStrikeWordmark.aspectRatio)
             .clamp(18.0, 40.0);
 
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.light,
-      child: Scaffold(
-        backgroundColor: BrandColors.midnight,
-        body: Stack(
-          fit: StackFit.expand,
-          children: [
-            const DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: BrandColors.backgroundGradient,
-              ),
-            ),
-            const DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: RadialGradient(
-                  center: Alignment(0, -0.25),
-                  radius: 0.9,
-                  colors: [BrandColors.nebula, Colors.transparent],
+    return BrandBackdrop(
+      layers: [
+        ExcludeSemantics(
+          child: RepaintBoundary(child: ParticleField(animation: _ambient)),
+        ),
+      ],
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          SafeArea(
+            child: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(AppSpacing.lg),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _AnimatedLogo(
+                      size: logoSize,
+                      scale: _logoScale,
+                      opacity: _logoOpacity,
+                      spin: _reticleSpin,
+                      strike: _strike,
+                      flash: _flash,
+                      pulse: _pulse,
+                    ),
+                    SizedBox(height: logoSize * 0.28),
+                    AnimatedBuilder(
+                      animation: _wordmark,
+                      builder: (context, _) => MathStrikeWordmark(
+                        height: wordmarkHeight,
+                        reveal: _wordmark.value,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.smd),
+                    const SizedBox(height: AppSpacing.sm),
+                    FadeTransition(
+                      opacity: _tagline,
+                      child: Text(
+                        'Solve it. Aim it. Strike it!',
+                        style: TextStyle(
+                          color: BrandColors.star.withValues(alpha: 0.7),
+                          fontSize: 15,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.xxl),
+                    FadeTransition(
+                      opacity: _footer,
+                      child: _StatusArea(
+                        startup: startup,
+                        onRetry: () => unawaited(
+                          ref.read(startupControllerProvider.notifier).retry(),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
-            ExcludeSemantics(
-              child: RepaintBoundary(child: ParticleField(animation: _ambient)),
-            ),
-            SafeArea(
-              child: Center(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(AppSpacing.lg),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _AnimatedLogo(
-                        size: logoSize,
-                        scale: _logoScale,
-                        opacity: _logoOpacity,
-                        spin: _reticleSpin,
-                        strike: _strike,
-                        flash: _flash,
-                        pulse: _pulse,
-                      ),
-                      SizedBox(height: logoSize * 0.28),
-                      AnimatedBuilder(
-                        animation: _wordmark,
-                        builder: (context, _) => MathStrikeWordmark(
-                          height: wordmarkHeight,
-                          reveal: _wordmark.value,
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.smd),
-                      const SizedBox(height: AppSpacing.sm),
-                      FadeTransition(
-                        opacity: _tagline,
-                        child: Text(
-                          'Solve it. Aim it. Strike it!',
-                          style: TextStyle(
-                            color: BrandColors.star.withValues(alpha: 0.7),
-                            fontSize: 15,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.xxl),
-                      FadeTransition(
-                        opacity: _footer,
-                        child: _StatusArea(
-                          startup: startup,
-                          onRetry: () => unawaited(
-                            ref
-                                .read(startupControllerProvider.notifier)
-                                .retry(),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            if (version != null)
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: AppSpacing.md,
-                child: SafeArea(
-                  top: false,
-                  child: FadeTransition(
-                    opacity: _footer,
-                    child: Text(
-                      version,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: BrandColors.star.withValues(alpha: 0.45),
-                        fontSize: 12,
-                      ),
+          ),
+          if (version != null)
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: AppSpacing.md,
+              child: SafeArea(
+                top: false,
+                child: FadeTransition(
+                  opacity: _footer,
+                  child: Text(
+                    version,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: BrandColors.star.withValues(alpha: 0.45),
+                      fontSize: 12,
                     ),
                   ),
                 ),
               ),
-          ],
-        ),
+            ),
+        ],
       ),
     );
   }

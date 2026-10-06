@@ -2,7 +2,9 @@ import 'key_value_store.dart';
 import 'local_database.dart';
 
 /// Non-persistent [LocalDatabase] used by tests and previews.
-final class InMemoryLocalDatabase implements LocalDatabase {
+final class InMemoryLocalDatabase
+    with SnapshotSupport
+    implements LocalDatabase {
   /// Creates an empty in-memory database.
   InMemoryLocalDatabase();
 

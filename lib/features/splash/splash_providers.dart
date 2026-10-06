@@ -5,8 +5,11 @@ library;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../core/di/core_providers.dart';
+import '../../core/errors/result.dart';
 import '../../core/services/platform/first_frame.dart';
 import '../../core/startup/startup_task.dart';
+import '../authentication/authentication_providers.dart';
+import '../authentication/presentation/controllers/account_controller.dart';
 import '../settings/presentation/controllers/appearance_controller.dart';
 
 part 'splash_providers.g.dart';
@@ -17,7 +20,6 @@ part 'splash_providers.g.dart';
 /// theme and launch record need the database). Later phases register their
 /// own tasks here:
 ///
-/// * Phase 3 – Google account & Drive backup detection
 /// * Phase 8 – audio preloading
 /// * Phase 12 – ads SDK (non-critical: the game must start offline)
 @Riverpod(keepAlive: true)
@@ -52,6 +54,20 @@ List<StartupTask> startupTasks(Ref ref) => [
             'Launch #${launch.launchCount} of ${launch.currentVersion}'
             '${launch.isVersionChange ? ' (updated)' : ''}',
           );
+    },
+  ),
+  StartupTask(
+    id: 'google',
+    label: 'Connecting to Google',
+    // Non-critical: a linked player must be able to play offline.
+    timeout: const Duration(seconds: 10),
+    run: () async {
+      final auth = ref.read(authRepositoryProvider);
+      // Initialise the SDK now so interactive sign-in can open its pop-up
+      // straight from the button press (required on the web).
+      if (await auth.prepare() case Err(:final failure)) throw failure;
+      if (ref.read(accountControllerProvider) == null) return;
+      if (await auth.restoreSession() case Err(:final failure)) throw failure;
     },
   ),
 ];

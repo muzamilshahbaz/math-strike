@@ -1,0 +1,7 @@
+{
+  "GOOGLE_SERVER_CLIENT_ID": "1234567890-web.apps.googleusercontent.com",
+  "GOOGLE_APPLE_CLIENT_ID": "1234567890-ios.apps.googleusercontent.com",
+  "GOOGLE_WEB_CLIENT_ID": "1234567890-web.apps.googleusercontent.com",
+  "GOOGLE_DESKTOP_CLIENT_ID": "1234567890-desktop.apps.googleusercontent.com",
+  "GOOGLE_DESKTOP_CLIENT_SECRET": "GOCSPX-replace-me"
+}

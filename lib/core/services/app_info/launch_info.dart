@@ -47,7 +47,7 @@ abstract interface class LaunchRepository {
   Future<LaunchInfo> recordLaunch(AppInfo app);
 }
 
-/// [LaunchRepository] stored in the encrypted `settings` box.
+/// [LaunchRepository] stored in the device-local `device` box.
 final class LaunchRepositoryImpl implements LaunchRepository {
   /// Creates the repository. [clock] is injectable for tests.
   LaunchRepositoryImpl({
@@ -78,7 +78,7 @@ final class LaunchRepositoryImpl implements LaunchRepository {
             currentVersion: app.version,
             previousVersion: previous.currentVersion,
           );
-    await _store.writeJson(SettingsKeys.launchInfo, info.toJson());
+    await _store.writeJson(DeviceKeys.launchInfo, info.toJson());
     if (info.isVersionChange) {
       _logger.info(
         'App updated ${info.previousVersion} → ${info.currentVersion}',
@@ -89,7 +89,7 @@ final class LaunchRepositoryImpl implements LaunchRepository {
 
   LaunchInfo? _readPrevious() {
     try {
-      final json = _store.readJson(SettingsKeys.launchInfo);
+      final json = _store.readJson(DeviceKeys.launchInfo);
       return json == null ? null : LaunchInfo.fromJson(json);
     } on Object catch (e, st) {
       _logger.warning(

@@ -52,7 +52,7 @@ void main() {
   });
 
   test('corrupt record is treated as a first launch', () async {
-    final store = InMemoryKeyValueStore({SettingsKeys.launchInfo: 'garbage'});
+    final store = InMemoryKeyValueStore({DeviceKeys.launchInfo: 'garbage'});
 
     final info = await repo(store, day1).recordLaunch(v1);
 

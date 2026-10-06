@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Failure {
 
- String get message; Object? get cause;
+ String get message;
 /// Create a copy of Failure
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $FailureCopyWith<Failure> get copyWith => _$FailureCopyWithImpl<Failure>(this as
 @override
 bool operator ==(Object other) {
   final _this = this as Failure;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Failure&&(identical(other.message, _this.message) || other.message == _this.message)&&const DeepCollectionEquality().equals(other.cause, _this.cause));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Failure&&(identical(other.message, _this.message) || other.message == _this.message));
 }
 
 
 @override
 int get hashCode {
   final _this = this as Failure;
-  return Object.hash(runtimeType,_this.message,const DeepCollectionEquality().hash(_this.cause));
+  return Object.hash(runtimeType,_this.message);
 }
 
 @override
 String toString() {
   final _this = this as Failure;
-  return 'Failure(message: ${_this.message}, cause: ${_this.cause})';
+  return 'Failure(message: ${_this.message})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $FailureCopyWith<$Res>  {
   factory $FailureCopyWith(Failure value, $Res Function(Failure) _then) = _$FailureCopyWithImpl;
 @useResult
 $Res call({
- String message, Object? cause
+ String message
 });
 
 
@@ -68,10 +68,10 @@ class _$FailureCopyWithImpl<$Res>
 
 /// Create a copy of Failure
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? message = null,Object? cause = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? message = null,}) {
   return _then(_self.copyWith(
 message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
-as String,cause: freezed == cause ? _self.cause : cause ,
+as String,
   ));
 }
 
@@ -92,13 +92,14 @@ extension FailurePatterns on Failure {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( StorageFailure value)?  storage,TResult Function( NetworkFailure value)?  network,TResult Function( AuthFailure value)?  auth,TResult Function( DataFormatFailure value)?  dataFormat,TResult Function( UnexpectedFailure value)?  unexpected,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( StorageFailure value)?  storage,TResult Function( NetworkFailure value)?  network,TResult Function( AuthFailure value)?  auth,TResult Function( AuthCancelledFailure value)?  authCancelled,TResult Function( DataFormatFailure value)?  dataFormat,TResult Function( UnexpectedFailure value)?  unexpected,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case StorageFailure() when storage != null:
 return storage(_that);case NetworkFailure() when network != null:
 return network(_that);case AuthFailure() when auth != null:
-return auth(_that);case DataFormatFailure() when dataFormat != null:
+return auth(_that);case AuthCancelledFailure() when authCancelled != null:
+return authCancelled(_that);case DataFormatFailure() when dataFormat != null:
 return dataFormat(_that);case UnexpectedFailure() when unexpected != null:
 return unexpected(_that);case _:
   return orElse();
@@ -118,13 +119,14 @@ return unexpected(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( StorageFailure value)  storage,required TResult Function( NetworkFailure value)  network,required TResult Function( AuthFailure value)  auth,required TResult Function( DataFormatFailure value)  dataFormat,required TResult Function( UnexpectedFailure value)  unexpected,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( StorageFailure value)  storage,required TResult Function( NetworkFailure value)  network,required TResult Function( AuthFailure value)  auth,required TResult Function( AuthCancelledFailure value)  authCancelled,required TResult Function( DataFormatFailure value)  dataFormat,required TResult Function( UnexpectedFailure value)  unexpected,}){
 final _that = this;
 switch (_that) {
 case StorageFailure():
 return storage(_that);case NetworkFailure():
 return network(_that);case AuthFailure():
-return auth(_that);case DataFormatFailure():
+return auth(_that);case AuthCancelledFailure():
+return authCancelled(_that);case DataFormatFailure():
 return dataFormat(_that);case UnexpectedFailure():
 return unexpected(_that);}
 }
@@ -140,13 +142,14 @@ return unexpected(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( StorageFailure value)?  storage,TResult? Function( NetworkFailure value)?  network,TResult? Function( AuthFailure value)?  auth,TResult? Function( DataFormatFailure value)?  dataFormat,TResult? Function( UnexpectedFailure value)?  unexpected,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( StorageFailure value)?  storage,TResult? Function( NetworkFailure value)?  network,TResult? Function( AuthFailure value)?  auth,TResult? Function( AuthCancelledFailure value)?  authCancelled,TResult? Function( DataFormatFailure value)?  dataFormat,TResult? Function( UnexpectedFailure value)?  unexpected,}){
 final _that = this;
 switch (_that) {
 case StorageFailure() when storage != null:
 return storage(_that);case NetworkFailure() when network != null:
 return network(_that);case AuthFailure() when auth != null:
-return auth(_that);case DataFormatFailure() when dataFormat != null:
+return auth(_that);case AuthCancelledFailure() when authCancelled != null:
+return authCancelled(_that);case DataFormatFailure() when dataFormat != null:
 return dataFormat(_that);case UnexpectedFailure() when unexpected != null:
 return unexpected(_that);case _:
   return null;
@@ -165,12 +168,13 @@ return unexpected(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String message,  Object? cause)?  storage,TResult Function( String message,  Object? cause)?  network,TResult Function( String message,  Object? cause)?  auth,TResult Function( String message,  Object? cause)?  dataFormat,TResult Function( String message,  Object? cause)?  unexpected,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String message,  Object? cause)?  storage,TResult Function( String message,  Object? cause)?  network,TResult Function( String message,  Object? cause)?  auth,TResult Function( String message)?  authCancelled,TResult Function( String message,  Object? cause)?  dataFormat,TResult Function( String message,  Object? cause)?  unexpected,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case StorageFailure() when storage != null:
 return storage(_that.message,_that.cause);case NetworkFailure() when network != null:
 return network(_that.message,_that.cause);case AuthFailure() when auth != null:
-return auth(_that.message,_that.cause);case DataFormatFailure() when dataFormat != null:
+return auth(_that.message,_that.cause);case AuthCancelledFailure() when authCancelled != null:
+return authCancelled(_that.message);case DataFormatFailure() when dataFormat != null:
 return dataFormat(_that.message,_that.cause);case UnexpectedFailure() when unexpected != null:
 return unexpected(_that.message,_that.cause);case _:
   return orElse();
@@ -190,12 +194,13 @@ return unexpected(_that.message,_that.cause);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String message,  Object? cause)  storage,required TResult Function( String message,  Object? cause)  network,required TResult Function( String message,  Object? cause)  auth,required TResult Function( String message,  Object? cause)  dataFormat,required TResult Function( String message,  Object? cause)  unexpected,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String message,  Object? cause)  storage,required TResult Function( String message,  Object? cause)  network,required TResult Function( String message,  Object? cause)  auth,required TResult Function( String message)  authCancelled,required TResult Function( String message,  Object? cause)  dataFormat,required TResult Function( String message,  Object? cause)  unexpected,}) {final _that = this;
 switch (_that) {
 case StorageFailure():
 return storage(_that.message,_that.cause);case NetworkFailure():
 return network(_that.message,_that.cause);case AuthFailure():
-return auth(_that.message,_that.cause);case DataFormatFailure():
+return auth(_that.message,_that.cause);case AuthCancelledFailure():
+return authCancelled(_that.message);case DataFormatFailure():
 return dataFormat(_that.message,_that.cause);case UnexpectedFailure():
 return unexpected(_that.message,_that.cause);}
 }
@@ -211,12 +216,13 @@ return unexpected(_that.message,_that.cause);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String message,  Object? cause)?  storage,TResult? Function( String message,  Object? cause)?  network,TResult? Function( String message,  Object? cause)?  auth,TResult? Function( String message,  Object? cause)?  dataFormat,TResult? Function( String message,  Object? cause)?  unexpected,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String message,  Object? cause)?  storage,TResult? Function( String message,  Object? cause)?  network,TResult? Function( String message,  Object? cause)?  auth,TResult? Function( String message)?  authCancelled,TResult? Function( String message,  Object? cause)?  dataFormat,TResult? Function( String message,  Object? cause)?  unexpected,}) {final _that = this;
 switch (_that) {
 case StorageFailure() when storage != null:
 return storage(_that.message,_that.cause);case NetworkFailure() when network != null:
 return network(_that.message,_that.cause);case AuthFailure() when auth != null:
-return auth(_that.message,_that.cause);case DataFormatFailure() when dataFormat != null:
+return auth(_that.message,_that.cause);case AuthCancelledFailure() when authCancelled != null:
+return authCancelled(_that.message);case DataFormatFailure() when dataFormat != null:
 return dataFormat(_that.message,_that.cause);case UnexpectedFailure() when unexpected != null:
 return unexpected(_that.message,_that.cause);case _:
   return null;
@@ -234,7 +240,7 @@ class StorageFailure implements Failure {
   
 
 @override final  String message;
-@override final  Object? cause;
+ final  Object? cause;
 
 /// Create a copy of Failure
 /// with the given fields replaced by the non-null parameter values.
@@ -303,7 +309,7 @@ class NetworkFailure implements Failure {
   
 
 @override final  String message;
-@override final  Object? cause;
+ final  Object? cause;
 
 /// Create a copy of Failure
 /// with the given fields replaced by the non-null parameter values.
@@ -372,7 +378,7 @@ class AuthFailure implements Failure {
   
 
 @override final  String message;
-@override final  Object? cause;
+ final  Object? cause;
 
 /// Create a copy of Failure
 /// with the given fields replaced by the non-null parameter values.
@@ -436,12 +442,80 @@ as String,cause: freezed == cause ? _self.cause : cause ,
 /// @nodoc
 
 
+class AuthCancelledFailure implements Failure {
+  const AuthCancelledFailure(this.message);
+  
+
+@override final  String message;
+
+/// Create a copy of Failure
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$AuthCancelledFailureCopyWith<AuthCancelledFailure> get copyWith => _$AuthCancelledFailureCopyWithImpl<AuthCancelledFailure>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthCancelledFailure&&(identical(other.message, message) || other.message == message));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,message);
+}
+
+@override
+String toString() {
+    return 'Failure.authCancelled(message: $message)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $AuthCancelledFailureCopyWith<$Res> implements $FailureCopyWith<$Res> {
+  factory $AuthCancelledFailureCopyWith(AuthCancelledFailure value, $Res Function(AuthCancelledFailure) _then) = _$AuthCancelledFailureCopyWithImpl;
+@override @useResult
+$Res call({
+ String message
+});
+
+
+
+
+}
+/// @nodoc
+class _$AuthCancelledFailureCopyWithImpl<$Res>
+    implements $AuthCancelledFailureCopyWith<$Res> {
+  _$AuthCancelledFailureCopyWithImpl(this._self, this._then);
+
+  final AuthCancelledFailure _self;
+  final $Res Function(AuthCancelledFailure) _then;
+
+/// Create a copy of Failure
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? message = null,}) {
+  return _then(AuthCancelledFailure(
+null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
 class DataFormatFailure implements Failure {
   const DataFormatFailure(this.message, {this.cause});
   
 
 @override final  String message;
-@override final  Object? cause;
+ final  Object? cause;
 
 /// Create a copy of Failure
 /// with the given fields replaced by the non-null parameter values.
@@ -510,7 +584,7 @@ class UnexpectedFailure implements Failure {
   
 
 @override final  String message;
-@override final  Object? cause;
+ final  Object? cause;
 
 /// Create a copy of Failure
 /// with the given fields replaced by the non-null parameter values.

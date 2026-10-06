@@ -14,9 +14,8 @@ part of 'app_router.dart';
 /// navigation stack and scroll position. Gameplay is a sibling route so it
 /// renders full-screen without navigation chrome.
 ///
-/// Guards (see [startupRedirect]): until start-up completes every location
-/// redirects to the splash, remembering where the user was going. Sign-in
-/// (Phase 3) and onboarding (Phase 4) guards are added the same way.
+/// Every navigation passes through [appRedirect]: splash → mandatory
+/// sign-in → backup check / restore → onboarding → app.
 
 @ProviderFor(appRouter)
 final appRouterProvider = AppRouterProvider._();
@@ -27,9 +26,8 @@ final appRouterProvider = AppRouterProvider._();
 /// navigation stack and scroll position. Gameplay is a sibling route so it
 /// renders full-screen without navigation chrome.
 ///
-/// Guards (see [startupRedirect]): until start-up completes every location
-/// redirects to the splash, remembering where the user was going. Sign-in
-/// (Phase 3) and onboarding (Phase 4) guards are added the same way.
+/// Every navigation passes through [appRedirect]: splash → mandatory
+/// sign-in → backup check / restore → onboarding → app.
 
 final class AppRouterProvider
     extends $FunctionalProvider<GoRouter, GoRouter, GoRouter>
@@ -40,9 +38,8 @@ final class AppRouterProvider
   /// navigation stack and scroll position. Gameplay is a sibling route so it
   /// renders full-screen without navigation chrome.
   ///
-  /// Guards (see [startupRedirect]): until start-up completes every location
-  /// redirects to the splash, remembering where the user was going. Sign-in
-  /// (Phase 3) and onboarding (Phase 4) guards are added the same way.
+  /// Every navigation passes through [appRedirect]: splash → mandatory
+  /// sign-in → backup check / restore → onboarding → app.
   AppRouterProvider._()
     : super(
         from: null,
@@ -76,4 +73,4 @@ final class AppRouterProvider
   }
 }
 
-String _$appRouterHash() => r'af2d6e2832b4f6c9a54a7c1a71289e31427cbc57';
+String _$appRouterHash() => r'43f1db1012d9429373310b3208fa01530c2be2fd';

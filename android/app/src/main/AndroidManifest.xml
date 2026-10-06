@@ -1,4 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Google Sign-In, Drive backup and ads. Flutter's template only adds
+         this to the debug manifest, so release builds need it here. -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:label="math_strike"
         android:name="${applicationName}"
