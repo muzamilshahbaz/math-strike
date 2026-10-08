@@ -52,4 +52,4 @@ final class AppGateProvider
   }
 }
 
-String _$appGateHash() => r'6b58cc47a569017598de98f6e6ee8816cc4ed341';
+String _$appGateHash() => r'04c1e6631ff2943c2f770927fa5b39aa12b1d0ca';

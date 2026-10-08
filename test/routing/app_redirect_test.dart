@@ -20,6 +20,11 @@ void main() {
   const ready = AppGate(
     startupCompleted: true,
     stage: AccountSetupStage.complete,
+    hasProfile: true,
+  );
+  const completeWithoutProfile = AppGate(
+    startupCompleted: true,
+    stage: AccountSetupStage.complete,
   );
 
   group('during start-up', () {
@@ -62,6 +67,14 @@ void main() {
       expect(redirect(AppRoutes.shop, onboarding), AppRoutes.onboarding);
       expect(redirect(AppRoutes.onboarding, onboarding), isNull);
     });
+  });
+
+  test('a missing profile (old backup, reset) leads to onboarding', () {
+    expect(
+      redirect(AppRoutes.home, completeWithoutProfile),
+      AppRoutes.onboarding,
+    );
+    expect(redirect(AppRoutes.onboarding, completeWithoutProfile), isNull);
   });
 
   group('set-up complete', () {

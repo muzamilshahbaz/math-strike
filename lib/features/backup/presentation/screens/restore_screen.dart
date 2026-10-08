@@ -12,6 +12,7 @@ import '../../../../core/theme/theme_context.dart';
 import '../../../../core/widgets/brand/brand_backdrop.dart';
 import '../../../../core/widgets/brand/math_strike_logo.dart';
 import '../../../authentication/presentation/controllers/account_controller.dart';
+import '../../../profile/presentation/controllers/profile_controller.dart';
 import '../../domain/entities/backup_metadata.dart';
 import '../controllers/restore_flow_controller.dart';
 
@@ -88,6 +89,10 @@ class _RestoreScreenState extends ConsumerState<RestoreScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(restoreFlowControllerProvider);
     final account = ref.watch(accountControllerProvider)?.account;
+    // Available once a restore has replaced local data.
+    final restoredName = state is RestoreSucceeded
+        ? ref.watch(profileControllerProvider)?.name
+        : null;
 
     ref.listen(restoreFlowControllerProvider, (_, next) {
       if (next is RestoreSucceeded || next is NoBackupFound) {
@@ -123,7 +128,10 @@ class _RestoreScreenState extends ConsumerState<RestoreScreen> {
                         RestoreSucceeded() => _Outcome(
                           icon: Icons.check_circle_rounded,
                           color: BrandColors.cyan,
-                          title: 'Welcome back!',
+                          title: switch (restoredName) {
+                            final name? => 'Welcome back, $name!',
+                            null => 'Welcome back!',
+                          },
                           message: 'Your progress has been restored.',
                           onContinue: _continue,
                         ),

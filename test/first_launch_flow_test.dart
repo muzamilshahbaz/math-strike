@@ -38,8 +38,7 @@ void main() {
     await waitForOutcomeHold(tester);
     expect(tester.currentLocation, AppRoutes.onboarding);
 
-    await tester.tap(find.text('Continue to the app'));
-    await tester.pumpAndSettle();
+    await tester.completeOnboarding();
     expect(tester.currentLocation, AppRoutes.home);
   });
 
@@ -60,6 +59,11 @@ void main() {
                   ).toJson(),
                 ),
               },
+              'profile': {
+                ProfileKeys.player: jsonEncode(
+                  testProfile.copyWith(name: 'Nova').toJson(),
+                ),
+              },
             },
           ),
         ),
@@ -71,7 +75,7 @@ void main() {
 
     await tester.tap(find.text('Continue with Google'));
     await tester.pumpAndSettle();
-    expect(find.text('Welcome back!'), findsOneWidget);
+    expect(find.text('Welcome back, Nova!'), findsOneWidget);
 
     await waitForOutcomeHold(tester);
     expect(tester.currentLocation, AppRoutes.home);
@@ -154,6 +158,32 @@ void main() {
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     await waitForOutcomeHold(tester);
+  });
+
+  testWidgets('a backup from before profiles existed leads to onboarding', (
+    tester,
+  ) async {
+    final drive = InMemoryBackupDataSource()
+      ..seed(
+        const BackupSnapshotCodec().encode(
+          BackupSnapshot(
+            formatVersion: 1,
+            createdAt: DateTime.utc(2026),
+            appVersion: '0.3.0',
+            boxes: const {'settings': {}},
+          ),
+        ),
+        appVersion: '0.3.0',
+        formatVersion: 1,
+      );
+    await tester.pumpMathStrikeAppAtSplash(linked: false, drive: drive);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Continue with Google'));
+    await tester.pumpAndSettle();
+    expect(find.text('Welcome back!'), findsOneWidget);
+
+    await waitForOutcomeHold(tester);
+    expect(tester.currentLocation, AppRoutes.onboarding);
   });
 
   testWidgets('a linked player starts offline without signing in again', (

@@ -16,7 +16,8 @@ T _$identity<T>(T value) => value;
 mixin _$AppGate {
 
  bool get startupCompleted;/// First-launch setup stage; `null` when no account is linked yet.
- AccountSetupStage? get stage;
+ AccountSetupStage? get stage;/// Whether a player profile exists on this device.
+ bool get hasProfile;
 /// Create a copy of AppGate
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,20 +29,20 @@ $AppGateCopyWith<AppGate> get copyWith => _$AppGateCopyWithImpl<AppGate>(this as
 @override
 bool operator ==(Object other) {
   final _this = this as AppGate;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppGate&&(identical(other.startupCompleted, _this.startupCompleted) || other.startupCompleted == _this.startupCompleted)&&(identical(other.stage, _this.stage) || other.stage == _this.stage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppGate&&(identical(other.startupCompleted, _this.startupCompleted) || other.startupCompleted == _this.startupCompleted)&&(identical(other.stage, _this.stage) || other.stage == _this.stage)&&(identical(other.hasProfile, _this.hasProfile) || other.hasProfile == _this.hasProfile));
 }
 
 
 @override
 int get hashCode {
   final _this = this as AppGate;
-  return Object.hash(runtimeType,_this.startupCompleted,_this.stage);
+  return Object.hash(runtimeType,_this.startupCompleted,_this.stage,_this.hasProfile);
 }
 
 @override
 String toString() {
   final _this = this as AppGate;
-  return 'AppGate(startupCompleted: ${_this.startupCompleted}, stage: ${_this.stage})';
+  return 'AppGate(startupCompleted: ${_this.startupCompleted}, stage: ${_this.stage}, hasProfile: ${_this.hasProfile})';
 }
 
 
@@ -52,7 +53,7 @@ abstract mixin class $AppGateCopyWith<$Res>  {
   factory $AppGateCopyWith(AppGate value, $Res Function(AppGate) _then) = _$AppGateCopyWithImpl;
 @useResult
 $Res call({
- bool startupCompleted, AccountSetupStage? stage
+ bool startupCompleted, AccountSetupStage? stage, bool hasProfile
 });
 
 
@@ -69,11 +70,12 @@ class _$AppGateCopyWithImpl<$Res>
 
 /// Create a copy of AppGate
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? startupCompleted = null,Object? stage = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? startupCompleted = null,Object? stage = freezed,Object? hasProfile = null,}) {
   return _then(AppGate(
 startupCompleted: null == startupCompleted ? _self.startupCompleted : startupCompleted // ignore: cast_nullable_to_non_nullable
 as bool,stage: freezed == stage ? _self.stage : stage // ignore: cast_nullable_to_non_nullable
-as AccountSetupStage?,
+as AccountSetupStage?,hasProfile: null == hasProfile ? _self.hasProfile : hasProfile // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -158,10 +160,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool startupCompleted,  AccountSetupStage? stage)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool startupCompleted,  AccountSetupStage? stage,  bool hasProfile)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AppGate() when $default != null:
-return $default(_that.startupCompleted,_that.stage);case _:
+return $default(_that.startupCompleted,_that.stage,_that.hasProfile);case _:
   return orElse();
 
 }
@@ -179,10 +181,10 @@ return $default(_that.startupCompleted,_that.stage);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool startupCompleted,  AccountSetupStage? stage)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool startupCompleted,  AccountSetupStage? stage,  bool hasProfile)  $default,) {final _that = this;
 switch (_that) {
 case _AppGate():
-return $default(_that.startupCompleted,_that.stage);case _:
+return $default(_that.startupCompleted,_that.stage,_that.hasProfile);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -199,10 +201,10 @@ return $default(_that.startupCompleted,_that.stage);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool startupCompleted,  AccountSetupStage? stage)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool startupCompleted,  AccountSetupStage? stage,  bool hasProfile)?  $default,) {final _that = this;
 switch (_that) {
 case _AppGate() when $default != null:
-return $default(_that.startupCompleted,_that.stage);case _:
+return $default(_that.startupCompleted,_that.stage,_that.hasProfile);case _:
   return null;
 
 }
@@ -214,12 +216,14 @@ return $default(_that.startupCompleted,_that.stage);case _:
 
 
 class _AppGate implements AppGate {
-  const _AppGate({this.startupCompleted = false, this.stage});
+  const _AppGate({this.startupCompleted = false, this.stage, this.hasProfile = false});
   
 
 @override@JsonKey() final  bool startupCompleted;
 /// First-launch setup stage; `null` when no account is linked yet.
 @override final  AccountSetupStage? stage;
+/// Whether a player profile exists on this device.
+@override@JsonKey() final  bool hasProfile;
 
 /// Create a copy of AppGate
 /// with the given fields replaced by the non-null parameter values.
@@ -231,18 +235,18 @@ _$AppGateCopyWith<_AppGate> get copyWith => __$AppGateCopyWithImpl<_AppGate>(thi
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppGate&&(identical(other.startupCompleted, startupCompleted) || other.startupCompleted == startupCompleted)&&(identical(other.stage, stage) || other.stage == stage));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppGate&&(identical(other.startupCompleted, startupCompleted) || other.startupCompleted == startupCompleted)&&(identical(other.stage, stage) || other.stage == stage)&&(identical(other.hasProfile, hasProfile) || other.hasProfile == hasProfile));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,startupCompleted,stage);
+    return Object.hash(runtimeType,startupCompleted,stage,hasProfile);
 }
 
 @override
 String toString() {
-    return 'AppGate(startupCompleted: $startupCompleted, stage: $stage)';
+    return 'AppGate(startupCompleted: $startupCompleted, stage: $stage, hasProfile: $hasProfile)';
 }
 
 
@@ -253,7 +257,7 @@ abstract mixin class _$AppGateCopyWith<$Res> implements $AppGateCopyWith<$Res> {
   factory _$AppGateCopyWith(_AppGate value, $Res Function(_AppGate) _then) = __$AppGateCopyWithImpl;
 @override @useResult
 $Res call({
- bool startupCompleted, AccountSetupStage? stage
+ bool startupCompleted, AccountSetupStage? stage, bool hasProfile
 });
 
 
@@ -270,11 +274,12 @@ class __$AppGateCopyWithImpl<$Res>
 
 /// Create a copy of AppGate
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? startupCompleted = null,Object? stage = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? startupCompleted = null,Object? stage = freezed,Object? hasProfile = null,}) {
   return _then(_AppGate(
 startupCompleted: null == startupCompleted ? _self.startupCompleted : startupCompleted // ignore: cast_nullable_to_non_nullable
 as bool,stage: freezed == stage ? _self.stage : stage // ignore: cast_nullable_to_non_nullable
-as AccountSetupStage?,
+as AccountSetupStage?,hasProfile: null == hasProfile ? _self.hasProfile : hasProfile // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

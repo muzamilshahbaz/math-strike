@@ -39,6 +39,10 @@ enum GameThemeId {
 
   const GameThemeId(this.label, this.seedColor, this.icon);
 
+  /// Themes available from the start (offered during onboarding). The rest
+  /// are unlocked through rewards and the shop (Phase 10).
+  static const List<GameThemeId> starters = [space, forest, ocean, candy];
+
   /// Display name.
   final String label;
 

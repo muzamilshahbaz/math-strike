@@ -17,6 +17,9 @@ import 'package:math_strike/features/authentication/domain/entities/account_link
 import 'package:math_strike/features/backup/backup_providers.dart';
 import 'package:math_strike/features/backup/data/datasources/backup_remote_data_source.dart';
 import 'package:math_strike/features/backup/data/datasources/in_memory_backup_data_source.dart';
+import 'package:math_strike/features/profile/domain/entities/age_group.dart';
+import 'package:math_strike/features/profile/domain/entities/difficulty.dart';
+import 'package:math_strike/features/profile/domain/entities/player_profile.dart';
 import 'package:math_strike/features/splash/splash_providers.dart';
 import 'package:math_strike/routing/app_router.dart';
 import 'package:math_strike/routing/app_routes.dart';
@@ -92,21 +95,39 @@ ProviderContainer createTestContainer({
   return container;
 }
 
+/// The profile created by [linkTestAccount] for a completed setup.
+final PlayerProfile testProfile = PlayerProfile(
+  name: 'Tester',
+  avatarId: 'bolt',
+  ageGroup: AgeGroup.latePrimary,
+  difficulty: Difficulty.medium,
+  createdAt: DateTime.utc(2026),
+);
+
 /// Links [database] to the fake account at [stage], as if the player had
-/// already been through first-launch setup.
+/// already been through first-launch setup. For a completed setup a player
+/// profile is created too (unless [withProfile] is false).
 Future<void> linkTestAccount(
   LocalDatabase database, {
   AccountSetupStage stage = AccountSetupStage.complete,
-}) => database
-    .store(StorageBox.device)
-    .writeJson(
-      DeviceKeys.accountLink,
-      AccountLink(
-        account: FakeGoogleAuthGateway.defaultAccount,
-        linkedAt: DateTime.utc(2026),
-        stage: stage,
-      ).toJson(),
-    );
+  bool? withProfile,
+}) async {
+  await database
+      .store(StorageBox.device)
+      .writeJson(
+        DeviceKeys.accountLink,
+        AccountLink(
+          account: FakeGoogleAuthGateway.defaultAccount,
+          linkedAt: DateTime.utc(2026),
+          stage: stage,
+        ).toJson(),
+      );
+  if (withProfile ?? stage == AccountSetupStage.complete) {
+    await database
+        .store(StorageBox.profile)
+        .writeJson(ProfileKeys.player, testProfile.toJson());
+  }
+}
 
 /// Test helpers for pumping the full app.
 extension PumpApp on WidgetTester {
@@ -173,12 +194,34 @@ extension PumpApp on WidgetTester {
     expect(currentLocation, AppRoutes.home);
   }
 
+  /// Walks through the onboarding wizard with default choices (ages 9–12),
+  /// ending on the home screen.
+  Future<void> completeOnboarding({String? name}) async {
+    if (name != null) {
+      await enterText(find.byType(TextField), name);
+      await pump();
+    }
+    await tap(find.text('Continue')); // name
+    await pumpAndSettle();
+    await tap(find.text('Continue')); // avatar
+    await pumpAndSettle();
+    await tap(find.text('9–12 years'));
+    await pump();
+    for (var i = 0; i < 4; i++) {
+      // age, difficulty, theme, sound
+      await tap(find.text('Continue'));
+      await pumpAndSettle();
+    }
+    await tap(find.text("Let's play!"));
+    await pumpAndSettle();
+  }
+
   /// The [ProviderContainer] of the pumped app.
-  ProviderContainer get container =>
+  ProviderContainer get appContainer =>
       ProviderScope.containerOf(element(find.byType(MathStrikeApp)));
 
   /// The router's current location.
-  String get currentLocation => container
+  String get currentLocation => appContainer
       .read(appRouterProvider)
       .routerDelegate
       .currentConfiguration

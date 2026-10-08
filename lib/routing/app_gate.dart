@@ -3,6 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../features/authentication/domain/entities/account_link.dart';
 import '../features/authentication/presentation/controllers/account_controller.dart';
+import '../features/profile/presentation/controllers/profile_controller.dart';
 import '../features/splash/presentation/controllers/startup_controller.dart';
 import 'app_routes.dart';
 
@@ -19,6 +20,9 @@ abstract class AppGate with _$AppGate {
 
     /// First-launch setup stage; `null` when no account is linked yet.
     AccountSetupStage? stage,
+
+    /// Whether a player profile exists on this device.
+    @Default(false) bool hasProfile,
   }) = _AppGate;
 }
 
@@ -30,6 +34,7 @@ AppGate appGate(Ref ref) {
   return AppGate(
     startupCompleted: true,
     stage: ref.watch(accountControllerProvider)?.stage,
+    hasProfile: ref.watch(profileControllerProvider) != null,
   );
 }
 
@@ -46,7 +51,8 @@ const Set<String> _gateRoutes = {
 /// 1. start-up not finished → splash (remembering the requested location);
 /// 2. no linked account → mandatory sign-in;
 /// 3. backup not checked yet → backup check / restore;
-/// 4. no profile yet → onboarding;
+/// 4. no profile (new player, a backup from before profiles existed, or a
+///    reset) → onboarding;
 /// 5. otherwise gate routes forward to the remembered location or home.
 ///
 /// The remembered location must be an in-app path outside the gate flow,
@@ -65,6 +71,7 @@ String? appRedirect({required Uri uri, required AppGate gate}) {
     null => AppRoutes.signIn,
     AccountSetupStage.restoreCheck => AppRoutes.accountSetup,
     AccountSetupStage.onboarding => AppRoutes.onboarding,
+    AccountSetupStage.complete when !gate.hasProfile => AppRoutes.onboarding,
     AccountSetupStage.complete => null,
   };
   if (requiredRoute != null) {

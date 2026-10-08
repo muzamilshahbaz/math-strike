@@ -16,6 +16,15 @@ abstract final class AppConstants {
 abstract final class SettingsKeys {
   /// Serialized appearance/accessibility settings.
   static const String appearance = 'appearance';
+
+  /// Sound and music preferences.
+  static const String audio = 'audio';
+}
+
+/// Storage keys used inside the `profile` box.
+abstract final class ProfileKeys {
+  /// The local player's profile.
+  static const String player = 'player';
 }
 
 /// Storage keys used inside the device-local `device` box.

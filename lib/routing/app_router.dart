@@ -5,10 +5,10 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../core/di/core_providers.dart';
 import '../features/authentication/presentation/screens/sign_in_screen.dart';
 import '../features/backup/presentation/screens/restore_screen.dart';
+import '../features/profile/presentation/screens/onboarding_screen.dart';
 import '../features/settings/presentation/screens/settings_screen.dart';
 import '../features/splash/presentation/screens/splash_screen.dart';
 import '../screens/error/not_found_screen.dart';
-import '../screens/placeholder/onboarding_placeholder_screen.dart';
 import '../screens/placeholder/placeholder_screen.dart';
 import '../screens/shell/app_shell.dart';
 import 'app_gate.dart';
@@ -55,7 +55,7 @@ GoRouter appRouter(Ref ref) {
       ),
       GoRoute(
         path: AppRoutes.onboarding,
-        builder: (context, state) => const OnboardingPlaceholderScreen(),
+        builder: (context, state) => const OnboardingScreen(),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => AppShell(navigationShell: shell),

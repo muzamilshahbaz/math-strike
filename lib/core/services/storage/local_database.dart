@@ -9,6 +9,9 @@ enum StorageBox {
   /// User preferences: appearance, audio, accessibility, language.
   settings('settings'),
 
+  /// The player profile (name, avatar, age group, difficulty).
+  profile('profile'),
+
   /// Facts about *this installation* (launch history, linked account).
   /// Never included in backups and preserved across restores.
   device('device', backedUp: false);

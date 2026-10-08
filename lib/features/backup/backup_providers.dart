@@ -11,6 +11,9 @@ import '../../core/di/core_providers.dart';
 import '../../core/services/storage/local_database.dart';
 import '../../core/theme/game_theme_id.dart';
 import '../authentication/authentication_providers.dart';
+import '../profile/domain/entities/age_group.dart';
+import '../profile/domain/entities/difficulty.dart';
+import '../profile/domain/entities/player_profile.dart';
 import '../settings/domain/entities/appearance_settings.dart';
 import 'data/codec/backup_snapshot_codec.dart';
 import 'data/datasources/backup_remote_data_source.dart';
@@ -63,6 +66,17 @@ BackupSnapshot _demoSnapshot() => BackupSnapshot(
           themeMode: ThemeMode.dark,
           gameTheme: GameThemeId.neon,
           textScale: 1.1,
+        ).toJson(),
+      ),
+    },
+    StorageBox.profile.boxName: {
+      ProfileKeys.player: jsonEncode(
+        PlayerProfile(
+          name: 'Nova',
+          avatarId: 'nova',
+          ageGroup: AgeGroup.latePrimary,
+          difficulty: Difficulty.medium,
+          createdAt: DateTime.utc(2026),
         ).toJson(),
       ),
     },

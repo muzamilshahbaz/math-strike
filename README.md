@@ -11,8 +11,9 @@ enemies reach them. Supports Android, iOS, Windows, macOS, Linux and Web.
 | 1 | Architecture, packages, theme, routing, DI | ✅ Done |
 | 2 | Splash screen & start-up pipeline | ✅ Done |
 | 3 | Google Sign-In, Drive backup detection, restore | ✅ Done |
-| 4 | Onboarding (profile) | ⏳ Next |
-| 5–17 | See the project brief | Planned |
+| 4 | Onboarding (profile, avatar, age, difficulty, theme, sound) | ✅ Done |
+| 5 | Home dashboard, statistics, daily rewards | ⏳ Next |
+| 6–17 | See the project brief | Planned |
 
 ## Getting started
 
@@ -102,7 +103,8 @@ lib/
                           account link, sign-in screen
     backup/               Drive app-folder data source, snapshot codec,
                           restore flow
-    settings/             appearance & accessibility
+    profile/              player profile, vector avatars, onboarding wizard
+    settings/             appearance, accessibility & audio settings
     splash/               animated splash + start-up pipeline
       domain/ presentation/ splash_providers.dart (task registry)
   routing/                GoRouter, route constants, start-up guard
@@ -178,6 +180,7 @@ The router gate (`routing/app_gate.dart`) enforces, in order:
 
 ```text
 splash → sign in (mandatory) → backup check / restore → onboarding → app
+                                                     (whenever no profile exists)
 ```
 
 * **Sign-in** links the device to a Google account (`AccountLink`, stored in

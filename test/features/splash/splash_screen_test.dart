@@ -106,7 +106,7 @@ void main() {
       ],
     );
 
-    tester.container.read(appRouterProvider).go(AppRoutes.settings);
+    tester.appContainer.read(appRouterProvider).go(AppRoutes.settings);
     await tester.pump();
     await tester.pump();
     expect(find.byType(SplashScreen), findsOneWidget);
