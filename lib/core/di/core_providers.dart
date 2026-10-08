@@ -10,6 +10,8 @@
 /// rest of the app can read their values synchronously afterwards.
 library;
 
+import 'dart:async';
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../config/app_config.dart';
@@ -17,6 +19,7 @@ import '../services/app_info/app_info.dart';
 import '../services/app_info/launch_info.dart';
 import '../services/logging/app_logger.dart';
 import '../services/storage/local_database.dart';
+import '../utils/calendar_day.dart';
 
 part 'core_providers.g.dart';
 
@@ -84,4 +87,39 @@ class LocalDataEpoch extends _$LocalDataEpoch {
 
   /// Signals that local data was replaced.
   void bump() => state++;
+}
+
+/// Returns the current time. Overridden in tests to control dates.
+typedef Clock = DateTime Function();
+
+/// The wall clock. Read the time through this provider (never call
+/// `DateTime.now()` directly in features) so date logic is testable.
+@Riverpod(keepAlive: true)
+Clock clock(Ref ref) => DateTime.now;
+
+/// Today's local [CalendarDay], updated automatically at midnight.
+///
+/// Day-based features (daily rewards, today's statistics) watch this, so
+/// they roll over while the app stays open across midnight.
+@Riverpod(keepAlive: true)
+class CurrentDay extends _$CurrentDay {
+  @override
+  CalendarDay build() {
+    final now = ref.watch(clockProvider)();
+    final today = CalendarDay.fromDateTime(now);
+    // A second past midnight, so the clock is safely in the new day.
+    final untilTomorrow =
+        today.addDays(1).startOfDayLocal.difference(now) +
+        const Duration(seconds: 1);
+    final timer = Timer(untilTomorrow, ref.invalidateSelf);
+    ref.onDispose(timer.cancel);
+    return today;
+  }
+
+  /// Re-reads the clock, e.g. when the app returns from the background
+  /// (timers may not fire while a mobile app is suspended).
+  void refresh() {
+    final today = CalendarDay.fromDateTime(ref.read(clockProvider)());
+    if (today != state) ref.invalidateSelf();
+  }
 }

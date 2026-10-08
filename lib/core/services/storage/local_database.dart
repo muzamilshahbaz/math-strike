@@ -12,6 +12,12 @@ enum StorageBox {
   /// The player profile (name, avatar, age group, difficulty).
   profile('profile'),
 
+  /// Currencies, experience and daily-reward progress.
+  rewards('rewards'),
+
+  /// Gameplay statistics (overall and per day).
+  statistics('statistics'),
+
   /// Facts about *this installation* (launch history, linked account).
   /// Never included in backups and preserved across restores.
   device('device', backedUp: false);

@@ -8,7 +8,9 @@ import '../features/backup/presentation/screens/restore_screen.dart';
 import '../features/profile/presentation/screens/onboarding_screen.dart';
 import '../features/settings/presentation/screens/settings_screen.dart';
 import '../features/splash/presentation/screens/splash_screen.dart';
+import '../features/statistics/presentation/screens/statistics_screen.dart';
 import '../screens/error/not_found_screen.dart';
+import '../screens/home/home_screen.dart';
 import '../screens/placeholder/placeholder_screen.dart';
 import '../screens/shell/app_shell.dart';
 import 'app_gate.dart';
@@ -60,21 +62,7 @@ GoRouter appRouter(Ref ref) {
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => AppShell(navigationShell: shell),
         branches: [
-          _branch(
-            AppRoutes.home,
-            (context) => PlaceholderScreen(
-              title: 'Home',
-              icon: Icons.home_rounded,
-              phase: 5,
-              description:
-                  'Your dashboard with stats, daily rewards and quick play.',
-              action: FilledButton.icon(
-                onPressed: () => context.push(AppRoutes.game),
-                icon: const Icon(Icons.play_arrow_rounded),
-                label: const Text('Quick play'),
-              ),
-            ),
-          ),
+          _branch(AppRoutes.home, (_) => const HomeScreen()),
           _branch(
             AppRoutes.play,
             (_) => const PlaceholderScreen(
@@ -84,15 +72,7 @@ GoRouter appRouter(Ref ref) {
               description: '1000+ levels, boss fights and game modes.',
             ),
           ),
-          _branch(
-            AppRoutes.progress,
-            (_) => const PlaceholderScreen(
-              title: 'Progress',
-              icon: Icons.insights_rounded,
-              phase: 14,
-              description: 'Accuracy, reaction time and weak-topic reports.',
-            ),
-          ),
+          _branch(AppRoutes.progress, (_) => const StatisticsScreen()),
           _branch(
             AppRoutes.shop,
             (_) => const PlaceholderScreen(

@@ -447,3 +447,121 @@ abstract class _$LocalDataEpoch extends $Notifier<int> {
     return element.handleCreate(ref, build);
   }
 }
+
+/// The wall clock. Read the time through this provider (never call
+/// `DateTime.now()` directly in features) so date logic is testable.
+
+@ProviderFor(clock)
+final clockProvider = ClockProvider._();
+
+/// The wall clock. Read the time through this provider (never call
+/// `DateTime.now()` directly in features) so date logic is testable.
+
+final class ClockProvider extends $FunctionalProvider<Clock, Clock, Clock>
+    with $Provider<Clock> {
+  /// The wall clock. Read the time through this provider (never call
+  /// `DateTime.now()` directly in features) so date logic is testable.
+  ClockProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'clockProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$clockHash();
+
+  @$internal
+  @override
+  $ProviderElement<Clock> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  Clock create(Ref ref) {
+    return clock(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(Clock value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<Clock>(value),
+    );
+  }
+}
+
+String _$clockHash() => r'ce4c8073e4878f6859ed9a59fae2c1819b4179af';
+
+/// Today's local [CalendarDay], updated automatically at midnight.
+///
+/// Day-based features (daily rewards, today's statistics) watch this, so
+/// they roll over while the app stays open across midnight.
+
+@ProviderFor(CurrentDay)
+final currentDayProvider = CurrentDayProvider._();
+
+/// Today's local [CalendarDay], updated automatically at midnight.
+///
+/// Day-based features (daily rewards, today's statistics) watch this, so
+/// they roll over while the app stays open across midnight.
+final class CurrentDayProvider
+    extends $NotifierProvider<CurrentDay, CalendarDay> {
+  /// Today's local [CalendarDay], updated automatically at midnight.
+  ///
+  /// Day-based features (daily rewards, today's statistics) watch this, so
+  /// they roll over while the app stays open across midnight.
+  CurrentDayProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'currentDayProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$currentDayHash();
+
+  @$internal
+  @override
+  CurrentDay create() => CurrentDay();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(CalendarDay value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<CalendarDay>(value),
+    );
+  }
+}
+
+String _$currentDayHash() => r'f909ade1357f025cdeb60ac5e210493996529a6d';
+
+/// Today's local [CalendarDay], updated automatically at midnight.
+///
+/// Day-based features (daily rewards, today's statistics) watch this, so
+/// they roll over while the app stays open across midnight.
+
+abstract class _$CurrentDay extends $Notifier<CalendarDay> {
+  CalendarDay build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<CalendarDay, CalendarDay>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<CalendarDay, CalendarDay>,
+              CalendarDay,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}

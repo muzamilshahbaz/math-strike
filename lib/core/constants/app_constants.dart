@@ -27,6 +27,21 @@ abstract final class ProfileKeys {
   static const String player = 'player';
 }
 
+/// Storage keys used inside the `rewards` box.
+abstract final class RewardsKeys {
+  /// Coins, diamonds and experience.
+  static const String wallet = 'wallet';
+
+  /// Daily-reward streak and last claim.
+  static const String dailyReward = 'daily_reward';
+}
+
+/// Storage keys used inside the `statistics` box.
+abstract final class StatisticsKeys {
+  /// The player's accumulated statistics.
+  static const String player = 'player';
+}
+
 /// Storage keys used inside the device-local `device` box.
 abstract final class DeviceKeys {
   /// Launch counter and last-run version.

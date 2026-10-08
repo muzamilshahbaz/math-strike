@@ -17,6 +17,8 @@ void main() {
     expect(snapshot, {
       'settings': {'theme': 'dark'},
       'profile': <String, String>{},
+      'rewards': <String, String>{},
+      'statistics': <String, String>{},
     });
     expect(snapshot.containsKey(StorageBox.device.boxName), isFalse);
   });

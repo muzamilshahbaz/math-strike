@@ -12,8 +12,9 @@ enemies reach them. Supports Android, iOS, Windows, macOS, Linux and Web.
 | 2 | Splash screen & start-up pipeline | ✅ Done |
 | 3 | Google Sign-In, Drive backup detection, restore | ✅ Done |
 | 4 | Onboarding (profile, avatar, age, difficulty, theme, sound) | ✅ Done |
-| 5 | Home dashboard, statistics, daily rewards | ⏳ Next |
-| 6–17 | See the project brief | Planned |
+| 5 | Home dashboard, statistics, daily rewards | ✅ Done |
+| 6 | Math engine, question generator, adaptive difficulty | ⏳ Next |
+| 7–17 | See the project brief | Planned |
 
 ## Getting started
 
@@ -37,7 +38,8 @@ flutter run --dart-define-from-file=config/google.json
 
 Without credentials, development builds use a labelled **demo account** and
 an in-memory Drive. Add `--dart-define=DEMO_BACKUP=true` to start with a
-sample backup and see the restore flow.
+sample backup (profile, coins, a reward streak and a week of statistics)
+and see the restore flow.
 
 Quality gates:
 
@@ -97,18 +99,24 @@ lib/
       storage/            LocalDatabase / KeyValueStore (encrypted Hive CE)
     startup/              StartupTask model
     theme/                AppTheme (M3), GamePalette, BrandColors, tokens
-    widgets/              shared widgets: brand logo, responsive helpers
+    utils/                CalendarDay (local dates), HUD formatters
+    widgets/              shared widgets: brand logo, responsive helpers,
+                          animated counter, confetti burst
   features/
     authentication/       Google sign-in gateways (plugin/desktop/demo),
                           account link, sign-in screen
     backup/               Drive app-folder data source, snapshot codec,
                           restore flow
     profile/              player profile, vector avatars, onboarding wizard
+    rewards/              wallet (coins, diamonds, XP), levels & ranks,
+                          7-day daily rewards
     settings/             appearance, accessibility & audio settings
     splash/               animated splash + start-up pipeline
+    statistics/           per-game and per-day totals, Progress tab
       domain/ presentation/ splash_providers.dart (task registry)
   routing/                GoRouter, route constants, start-up guard
-  screens/                app-level screens: shell, placeholders, errors
+  screens/                app-level screens: shell, home dashboard,
+                          placeholders, errors
 test/                     mirrors lib/; helpers/ holds shared fakes
   goldens/                pixel tests (tag: golden)
 ```
@@ -147,7 +155,8 @@ Material 3 window size classes (`WindowSize`):
 | 600–1199 | Collapsed `NavigationRail` |
 | ≥ 1200 | Extended sidebar with branding |
 
-Keyboard: `Alt+1…5` switches tabs.
+Keyboard: `Alt+1…5` switches tabs. A dot on **Home** means a daily reward
+is waiting.
 
 ### Start-up pipeline
 
@@ -196,6 +205,40 @@ splash → sign in (mandatory) → backup check / restore → onboarding → app
   controllers reload afterwards.
 * **Backup format v1:** versioned JSON envelope (`BackupSnapshotCodec`);
   Phase 13 adds encryption and incremental backups as v2.
+
+### Home, rewards and statistics
+
+The **Home** tab composes features rather than owning data: player header
+(avatar, level, XP), Quick play, the daily-reward card and today's stats
+with a 7-day activity chart. Phones get one column; from 840dp of content
+width the dashboard splits into two.
+
+| Box | Key | Contents |
+|---|---|---|
+| `rewards` | `wallet` | coins, diamonds, lifetime XP |
+| `rewards` | `daily_reward` | last claim day, streak, longest streak |
+| `statistics` | `player` | lifetime totals, per-day totals (400 days), bests |
+
+Both boxes are backed up automatically (every `StorageBox` with
+`backedUp: true` is part of the snapshot).
+
+* **Dates** — day-based logic uses `CalendarDay` (local calendar date, no
+  time), read through `clockProvider`; never call `DateTime.now()` in
+  features. `currentDayProvider` rolls over at local midnight and is
+  re-checked when the app resumes.
+* **Daily rewards** (`DailyRewardSchedule`) — one claim per local day;
+  consecutive days walk a 7-day cycle ending in a treasure chest
+  (300 coins, 3 diamonds, 100 XP), then the cycle repeats while the streak
+  keeps counting. Missing a day resets to day 1. Moving the clock back
+  never makes a reward claimable again. The claim record is written before
+  the wallet, so an interrupted save cannot pay out twice.
+* **Levels** — derived from lifetime XP: level *n* → *n+1* costs
+  100 + 50·(n−1) XP, up to level 100; ranks Rookie → Legend.
+* **Statistics** — gameplay (Phase 7) reports each finished game with
+  `StatisticsController.recordSession(GameSessionSummary)` and pays out
+  with `WalletController.credit(Reward)`. The Progress tab summarises
+  Today / 7 days / 30 days / All time; Phase 14 adds topic analysis and
+  reports.
 
 ### Accessibility
 

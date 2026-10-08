@@ -22,7 +22,7 @@ abstract final class AppRoutes {
   /// Level map / mode selection (Phase 9).
   static const String play = '/play';
 
-  /// Statistics and reports (Phase 14).
+  /// Statistics (Phase 5); reports and graphs (Phase 14).
   static const String progress = '/progress';
 
   /// Shop and rewards (Phase 10).

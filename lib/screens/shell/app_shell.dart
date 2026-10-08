@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/constants/app_constants.dart';
+import '../../core/di/core_providers.dart';
 import '../../core/theme/app_tokens.dart';
 import '../../core/theme/theme_context.dart';
 import '../../core/widgets/brand/math_strike_logo.dart';
 import '../../core/widgets/brand/math_strike_wordmark.dart';
 import '../../core/widgets/responsive/window_size.dart';
+import '../../features/rewards/presentation/controllers/daily_reward_controller.dart';
 import 'app_destinations.dart';
 
 /// Adaptive navigation chrome around the top-level tabs.
@@ -16,13 +19,25 @@ import 'app_destinations.dart';
 /// * medium / expanded (tablets): collapsed [NavigationRail]
 /// * large (desktop / wide web): extended sidebar
 ///
-/// `Alt + 1â€¦5` switches tabs on keyboards.
-class AppShell extends StatelessWidget {
+/// `Alt + 1…5` switches tabs on keyboards. A badge on Home signals an
+/// unclaimed daily reward.
+class AppShell extends ConsumerStatefulWidget {
   /// Creates the shell for [navigationShell].
   const AppShell({required this.navigationShell, super.key});
 
   /// Router-provided shell that owns the per-tab navigators.
   final StatefulNavigationShell navigationShell;
+
+  @override
+  ConsumerState<AppShell> createState() => _AppShellState();
+}
+
+class _AppShellState extends ConsumerState<AppShell> {
+  // Timers may not fire while a mobile app is suspended, so re-check the
+  // date on resume: a reward left open overnight becomes claimable.
+  late final AppLifecycleListener _lifecycle;
+
+  StatefulNavigationShell get navigationShell => widget.navigationShell;
 
   static const List<LogicalKeyboardKey> _digitKeys = [
     LogicalKeyboardKey.digit1,
@@ -43,8 +58,33 @@ class AppShell extends StatelessWidget {
   );
 
   @override
+  void initState() {
+    super.initState();
+    _lifecycle = AppLifecycleListener(
+      onResume: () => ref.read(currentDayProvider.notifier).refresh(),
+    );
+  }
+
+  @override
+  void dispose() {
+    _lifecycle.dispose();
+    super.dispose();
+  }
+
+  /// Which destinations currently show an attention badge.
+  List<bool> _badges() {
+    final rewardReady = ref.watch(
+      dailyRewardControllerProvider.select((status) => status.canClaim),
+    );
+    return [
+      for (final (i, _) in appDestinations.indexed) i == 0 && rewardReady,
+    ];
+  }
+
+  @override
   Widget build(BuildContext context) {
     final size = context.windowSize;
+    final badges = _badges();
     final scaffold = size == WindowSize.compact
         ? Scaffold(
             body: navigationShell,
@@ -52,10 +92,13 @@ class AppShell extends StatelessWidget {
               selectedIndex: navigationShell.currentIndex,
               onDestinationSelected: _select,
               destinations: [
-                for (final d in appDestinations)
+                for (final (i, d) in appDestinations.indexed)
                   NavigationDestination(
-                    icon: Icon(d.icon),
-                    selectedIcon: Icon(d.selectedIcon),
+                    icon: _BadgedIcon(d.icon, badged: badges[i]),
+                    selectedIcon: _BadgedIcon(
+                      d.selectedIcon,
+                      badged: badges[i],
+                    ),
                     label: d.label,
                   ),
               ],
@@ -65,6 +108,7 @@ class AppShell extends StatelessWidget {
             body: Row(
               children: [
                 _SideNavigation(
+                  badges: badges,
                   selectedIndex: navigationShell.currentIndex,
                   onSelected: _select,
                   extended: size == WindowSize.large,
@@ -92,11 +136,13 @@ class AppShell extends StatelessWidget {
 /// Navigation rail that expands into a labelled sidebar on large screens.
 class _SideNavigation extends StatelessWidget {
   const _SideNavigation({
+    required this.badges,
     required this.selectedIndex,
     required this.onSelected,
     required this.extended,
   });
 
+  final List<bool> badges;
   final int selectedIndex;
   final ValueChanged<int> onSelected;
   final bool extended;
@@ -135,9 +181,9 @@ class _SideNavigation extends StatelessWidget {
           NavigationRailDestination(
             icon: Tooltip(
               message: '${d.label}  (Alt+${i + 1})',
-              child: Icon(d.icon),
+              child: _BadgedIcon(d.icon, badged: badges[i]),
             ),
-            selectedIcon: Icon(d.selectedIcon),
+            selectedIcon: _BadgedIcon(d.selectedIcon, badged: badges[i]),
             label: Text(d.label),
           ),
       ],
@@ -174,4 +220,18 @@ class _Brand extends StatelessWidget {
           : mark,
     );
   }
+}
+
+/// A destination icon with an optional attention dot.
+class _BadgedIcon extends StatelessWidget {
+  const _BadgedIcon(this.icon, {required this.badged});
+
+  final IconData icon;
+  final bool badged;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    label: badged ? 'Reward ready' : null,
+    child: Badge(isLabelVisible: badged, smallSize: 10, child: Icon(icon)),
+  );
 }
