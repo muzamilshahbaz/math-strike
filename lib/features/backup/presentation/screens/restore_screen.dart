@@ -68,7 +68,7 @@ class _RestoreScreenState extends ConsumerState<RestoreScreen> {
         title: const Text('Continue without restoring?'),
         content: const Text(
           "You'll start with a new profile. Your backup stays safe in Google "
-          'Drive and can be restored later from Settings → Backup.',
+          'Drive and can be restored later from Settings > Backup.',
         ),
         actions: [
           TextButton(

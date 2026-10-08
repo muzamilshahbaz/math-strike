@@ -4,10 +4,10 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_tokens.dart';
 import '../../../core/theme/theme_context.dart';
+import '../../../core/widgets/responsive/responsive_grid.dart';
 import '../../../features/statistics/domain/entities/player_statistics.dart';
 import '../../../features/statistics/presentation/controllers/statistics_controller.dart';
 import '../../../features/statistics/presentation/widgets/activity_chart.dart';
-import '../../../features/statistics/presentation/widgets/stat_tile.dart';
 import '../../../features/statistics/presentation/widgets/stat_tiles.dart';
 import '../../../routing/app_routes.dart';
 
@@ -47,7 +47,7 @@ class TodaySnapshot extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: AppSpacing.sm),
-            StatGrid(
+            ResponsiveGrid(
               minTileWidth: 150,
               children: [
                 questionsTile(today),

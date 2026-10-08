@@ -5,6 +5,7 @@ import '../../core/theme/app_tokens.dart';
 import '../../features/rewards/presentation/widgets/currency.dart';
 import '../../features/rewards/presentation/widgets/daily_reward_card.dart';
 import 'widgets/player_header.dart';
+import 'widgets/practice_card.dart';
 import 'widgets/quick_play_card.dart';
 import 'widgets/today_snapshot.dart';
 
@@ -46,7 +47,13 @@ class HomeScreen extends ConsumerWidget {
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [PlayerHeader(), gap, QuickPlayCard()],
+                        children: [
+                          PlayerHeader(),
+                          gap,
+                          QuickPlayCard(),
+                          gap,
+                          PracticeCard(),
+                        ],
                       ),
                     ),
                     gap,
@@ -66,6 +73,8 @@ class HomeScreen extends ConsumerWidget {
                     QuickPlayCard(),
                     gap,
                     DailyRewardCard(),
+                    gap,
+                    PracticeCard(),
                     gap,
                     TodaySnapshot(),
                   ],

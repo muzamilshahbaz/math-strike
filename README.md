@@ -13,8 +13,9 @@ enemies reach them. Supports Android, iOS, Windows, macOS, Linux and Web.
 | 3 | Google Sign-In, Drive backup detection, restore | ✅ Done |
 | 4 | Onboarding (profile, avatar, age, difficulty, theme, sound) | ✅ Done |
 | 5 | Home dashboard, statistics, daily rewards | ✅ Done |
-| 6 | Math engine, question generator, adaptive difficulty | ⏳ Next |
-| 7–17 | See the project brief | Planned |
+| 6 | Math engine, question generator, adaptive difficulty, practice mode | ✅ Done |
+| 7 | Core shooting gameplay (Flame) | ⏳ Next |
+| 8–17 | See the project brief | Planned |
 
 ## Getting started
 
@@ -107,6 +108,9 @@ lib/
                           account link, sign-in screen
     backup/               Drive app-folder data source, snapshot codec,
                           restore flow
+    math/                 question engine (18 topics × 10 levels),
+                          difficulty profiles, adaptive learning,
+                          practice mode
     profile/              player profile, vector avatars, onboarding wizard
     rewards/              wallet (coins, diamonds, XP), levels & ranks,
                           7-day daily rewards
@@ -218,8 +222,9 @@ width the dashboard splits into two.
 | `rewards` | `wallet` | coins, diamonds, lifetime XP |
 | `rewards` | `daily_reward` | last claim day, streak, longest streak |
 | `statistics` | `player` | lifetime totals, per-day totals (400 days), bests |
+| `learning` | `progress` | per-topic rating, attempts, recent results |
 
-Both boxes are backed up automatically (every `StorageBox` with
+These boxes are backed up automatically (every `StorageBox` with
 `backedUp: true` is part of the snapshot).
 
 * **Dates** — day-based logic uses `CalendarDay` (local calendar date, no
@@ -239,6 +244,41 @@ Both boxes are backed up automatically (every `StorageBox` with
   with `WalletController.credit(Reward)`. The Progress tab summarises
   Today / 7 days / 30 days / All time; Phase 14 adds topic analysis and
   reports.
+
+### Math engine and adaptive learning
+
+`features/math/domain` is pure Dart: no Flutter widgets, deterministic for
+a given `Random` seed.
+
+* **Engine** (`MathEngine`) — one generator per topic, 10 levels each. Every
+  `Question` has a prompt, shuffled choices built from *typical mistakes*
+  (forgetting to carry, adding denominators, misplacing the decimal point,
+  sign errors…), a hint and a worked explanation. Recent prompts are not
+  repeated.
+* **Canonical text** (`MathText`) — every value is written exactly one way
+  (`1.5`, never `1.50`; fractions in lowest terms), so duplicate choices are
+  caught by string comparison. Exponents are marked up as `2^5` and drawn
+  raised by `MathTextView`, because bundled fonts lack most Unicode
+  superscripts (they would need a runtime font download). A test checks
+  every generated string uses font-safe characters only.
+* **Difficulty** (`DifficultyProfile`) — the age group decides the topics
+  (preschool: 3, ages 6–8: 9, ages 9–12: 14, teens/adults: all 18), the top
+  level and the number of choices; the difficulty decides the starting
+  level and the answer time.
+* **Adaptive learning** (`AdaptiveModel`) — each topic has a rating whose
+  whole part is its level. Correct answers raise it (more when fast or for
+  a harder question; less with a hint), mistakes lower it more sharply, so
+  players settle where they mostly succeed. Questions are usually at the
+  current level, sometimes one below or above. A topic is *weak* below 60%
+  recent accuracy and *strong* at 85%+ over 10+ attempts; the recommended
+  mix favours weak, new and long-unpractised topics.
+* **Practice mode** — `/practice` (topic picker) and `/practice/session`:
+  10 questions with hints, explanations, keyboard shortcuts (`1`–`4`, `H`,
+  `Enter`) and a summary with level changes and a mistake review. Sessions
+  count towards statistics. Gameplay (Phase 7) will use the same engine
+  and `LearningController.recordAnswer`.
+
+Mastery is stored in the backed-up `learning` box.
 
 ### Accessibility
 

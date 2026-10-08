@@ -19,6 +19,7 @@ void main() {
       'profile': <String, String>{},
       'rewards': <String, String>{},
       'statistics': <String, String>{},
+      'learning': <String, String>{},
     });
     expect(snapshot.containsKey(StorageBox.device.boxName), isFalse);
   });

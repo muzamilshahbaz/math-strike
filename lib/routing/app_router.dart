@@ -5,6 +5,9 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../core/di/core_providers.dart';
 import '../features/authentication/presentation/screens/sign_in_screen.dart';
 import '../features/backup/presentation/screens/restore_screen.dart';
+import '../features/math/domain/entities/math_topic.dart';
+import '../features/math/presentation/screens/practice_screen.dart';
+import '../features/math/presentation/screens/practice_session_screen.dart';
 import '../features/profile/presentation/screens/onboarding_screen.dart';
 import '../features/settings/presentation/screens/settings_screen.dart';
 import '../features/splash/presentation/screens/splash_screen.dart';
@@ -65,11 +68,16 @@ GoRouter appRouter(Ref ref) {
           _branch(AppRoutes.home, (_) => const HomeScreen()),
           _branch(
             AppRoutes.play,
-            (_) => const PlaceholderScreen(
+            (context) => PlaceholderScreen(
               title: 'Play',
               icon: Icons.sports_esports_rounded,
               phase: 9,
               description: '1000+ levels, boss fights and game modes.',
+              action: FilledButton.icon(
+                onPressed: () => context.push(AppRoutes.practice),
+                icon: const Icon(Icons.school_rounded),
+                label: const Text('Practice mode'),
+              ),
             ),
           ),
           _branch(AppRoutes.progress, (_) => const StatisticsScreen()),
@@ -83,6 +91,20 @@ GoRouter appRouter(Ref ref) {
             ),
           ),
           _branch(AppRoutes.settings, (_) => const SettingsScreen()),
+        ],
+      ),
+      GoRoute(
+        path: AppRoutes.practice,
+        builder: (context, state) => const PracticeScreen(),
+        routes: [
+          GoRoute(
+            path: 'session',
+            builder: (context, state) => PracticeSessionScreen(
+              topic: MathTopic.tryParse(
+                state.uri.queryParameters[AppRoutes.topicParam] ?? '',
+              ),
+            ),
+          ),
         ],
       ),
       GoRoute(

@@ -18,6 +18,9 @@ enum StorageBox {
   /// Gameplay statistics (overall and per day).
   statistics('statistics'),
 
+  /// Per-topic mastery for adaptive learning.
+  learning('learning'),
+
   /// Facts about *this installation* (launch history, linked account).
   /// Never included in backups and preserved across restores.
   device('device', backedUp: false);

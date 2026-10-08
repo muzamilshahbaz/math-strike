@@ -5,7 +5,9 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_tokens.dart';
 import '../../../../core/theme/theme_context.dart';
 import '../../../../core/utils/formatters.dart';
+import '../../../../core/widgets/responsive/responsive_grid.dart';
 import '../../../../routing/app_routes.dart';
+import '../../../math/presentation/widgets/topic_strengths.dart';
 import '../../domain/entities/player_statistics.dart';
 import '../controllers/statistics_controller.dart';
 import '../widgets/activity_chart.dart';
@@ -15,7 +17,7 @@ import '../widgets/stat_tiles.dart';
 /// The Progress tab: the player's statistics for a chosen period, all-time
 /// highlights and recent activity.
 ///
-/// Phase 14 adds topic breakdowns, learning graphs and reports.
+/// Phase 14 adds learning graphs and detailed reports.
 class StatisticsScreen extends ConsumerStatefulWidget {
   /// Creates the screen.
   const StatisticsScreen({super.key});
@@ -62,7 +64,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                 ],
               ),
               const SizedBox(height: AppSpacing.md),
-              StatGrid(children: periodTiles(context, totals)),
+              ResponsiveGrid(children: periodTiles(context, totals)),
               const _SectionHeader('Activity'),
               Card(
                 child: Padding(
@@ -80,8 +82,10 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                   ),
                 ),
               ),
+              const _SectionHeader('Topics'),
+              const TopicStrengths(),
               const _SectionHeader('All-time bests'),
-              StatGrid(
+              ResponsiveGrid(
                 children: [
                   StatTile(
                     icon: Icons.local_fire_department_rounded,

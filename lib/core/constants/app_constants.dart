@@ -42,6 +42,12 @@ abstract final class StatisticsKeys {
   static const String player = 'player';
 }
 
+/// Storage keys used inside the `learning` box.
+abstract final class LearningKeys {
+  /// Per-topic mastery.
+  static const String progress = 'progress';
+}
+
 /// Storage keys used inside the device-local `device` box.
 abstract final class DeviceKeys {
   /// Launch counter and last-run version.

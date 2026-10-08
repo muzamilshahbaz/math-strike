@@ -31,6 +31,16 @@ abstract final class AppRoutes {
   /// Settings (Phase 11).
   static const String settings = '/settings';
 
+  /// Practice hub: topic picker (Phase 6).
+  static const String practice = '/practice';
+
+  /// A practice session; [topicParam] picks the topic (omitted for a
+  /// recommended mix).
+  static const String practiceSession = '/practice/session';
+
+  /// Query parameter on [practiceSession] naming the topic.
+  static const String topicParam = 'topic';
+
   /// Full-screen gameplay, outside the navigation shell (Phase 7).
   static const String game = '/game';
 }
